@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Bermuda Dining Guide · July 2026</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --teal:#1A7A6E;--teal-d:#145F56;--dark:#1C1C1E;--mid:#48484A;
+  --light:#6C6C70;--pale:#8E8E93;--bg:#F2F2F7;--card:#FFFFFF;
+  --border:#E5E5EA;--sand:#F5F0E8;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--dark);overflow-x:hidden}
+.page{display:none;min-height:100vh}
+.page.active{display:block;animation:fi .22s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── OVERVIEW HEADER ── */
+.oh{background:linear-gradient(160deg,#1A7A6E 0%,#0F5249 100%);padding:calc(var(--st) + 22px) 20px 28px;color:#fff}
+.oh h1{font-size:30px;font-weight:700;letter-spacing:-.6px;line-height:1.1}
+.oh .sub{font-size:14px;opacity:.75;margin-top:4px}
+.oh .hotel{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500;margin-top:10px}
+
+/* ── SECTION LABELS ── */
+.sl{padding:22px 20px 10px;display:flex;align-items:center;gap:8px}
+.sl h2{font-size:21px;font-weight:700;letter-spacing:-.3px}
+.sl .ct{font-size:13px;color:var(--pale);font-weight:500;margin-left:auto}
+.sdiv{height:8px;background:var(--bg)}
+
+/* ── CARDS ── */
+.rc{margin:0 16px 14px;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);cursor:pointer;transition:transform .14s}
+.rc:active{transform:scale(.975)}
+.rc img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--border)}
+.cb{padding:14px 16px 16px}
+.ct-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;letter-spacing:.3px;text-transform:uppercase}
+.teal{background:#E0F2F0;color:var(--teal)}
+.gray{background:var(--bg);color:var(--pale)}
+.amber{background:#FFF3E0;color:#E65100}
+.dist{font-size:12px;color:var(--pale);font-weight:500;margin-left:auto}
+.cn{font-size:20px;font-weight:700;letter-spacing:-.3px;color:var(--dark);line-height:1.2;margin-bottom:5px}
+.cd{font-size:14px;color:var(--mid);line-height:1.5}
+
+/* ── DETAIL NAV ── */
+.dn{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--st) + 12px) 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center}
+.bb{display:flex;align-items:center;gap:5px;color:var(--teal);font-size:16px;font-weight:500;background:none;border:none;cursor:pointer;min-height:44px;padding:0}
+.bb svg{width:10px;height:16px;flex-shrink:0}
+.nt{font-size:13px;color:var(--pale);font-weight:500;margin-left:auto}
+
+/* ── GALLERY ── */
+.gw{position:relative;overflow:hidden;background:#111;aspect-ratio:4/3}
+.gt{display:flex;height:100%;transition:transform .3s cubic-bezier(.25,.46,.45,.94);will-change:transform}
+.gs{min-width:100%;height:100%}
+.gs img{width:100%;height:100%;object-fit:cover;display:block}
+.gd{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;pointer-events:none}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45);transition:all .2s}
+.dot.on{background:#fff;width:18px;border-radius:3px}
+
+/* ── DETAIL CONTENT ── */
+.dc{padding:18px 18px calc(var(--sb) + 44px)}
+.dbadge{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.dname{font-size:27px;font-weight:700;letter-spacing:-.5px;line-height:1.15;margin-bottom:16px}
+.dcard{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.dr{padding:14px 16px;border-bottom:1px solid var(--border)}
+.dr:last-child{border-bottom:none}
+.dl{font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.dv{font-size:15px;color:var(--dark);line-height:1.55}
+.ff{background:var(--sand);border-radius:16px;padding:15px 15px 15px 14px;margin-bottom:14px;display:flex;gap:11px}
+.ffi{font-size:17px;flex-shrink:0;margin-top:1px}
+.fft{font-size:14px;color:var(--mid);line-height:1.55;font-style:italic}
+.ms{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.mh{padding:12px 16px;font-size:11px;font-weight:600;color:var(--pale);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)}
+.ml{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--dark);font-size:15px;font-weight:500;min-height:50px}
+.ml:last-child{border-bottom:none}
+.ma{color:var(--pale);font-size:18px;font-weight:300}
+.rbtn{display:block;background:var(--teal);color:#fff;text-align:center;padding:16px;border-radius:14px;font-size:17px;font-weight:600;text-decoration:none;margin-bottom:10px;letter-spacing:-.2px}
+.rbtn:active{background:var(--teal-d)}
+.pbtn{display:block;background:var(--card);color:var(--teal);text-align:center;padding:15px;border-radius:14px;font-size:16px;font-weight:500;text-decoration:none;border:1.5px solid var(--teal);margin-bottom:10px}
+.hn{font-size:13px;color:var(--pale);text-align:center;line-height:1.4;padding-top:2px}
+.ob{padding:0 0 calc(var(--sb) + 28px)}
+
+/* ── ITINERARY BANNER ── */
+.ib-btn{margin:16px 16px 4px;background:linear-gradient(135deg,#1A7A6E 0%,#0F5249 100%);border-radius:18px;padding:18px 18px 18px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .14s;text-decoration:none}
+.ib-btn:active{transform:scale(.975)}
+.ib-ico{font-size:30px;flex-shrink:0}
+.ib-txt h3{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-bottom:2px}
+.ib-txt p{font-size:13px;color:rgba(255,255,255,.72);line-height:1.4}
+.ib-arr{color:rgba(255,255,255,.6);font-size:20px;font-weight:300;margin-left:auto;flex-shrink:0}
+
+/* ── RECOMMENDATIONS PAGE ── */
+.rh{background:linear-gradient(160deg,#1A7A6E 0%,#0F5249 100%);padding:calc(var(--st) + 22px) 20px 28px;color:#fff}
+.rh h1{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1.15}
+.rh .sub{font-size:14px;opacity:.75;margin-top:4px}
+.nights{padding:16px 16px calc(var(--sb) + 36px)}
+.nc{background:var(--card);border-radius:18px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.nd{background:var(--teal);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.nd-date{font-size:13px;font-weight:600;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px}
+.nd-night{font-size:15px;font-weight:700;color:#fff}
+.bday-badge{background:rgba(255,255,255,.22);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:#fff}
+.nb{padding:16px}
+.nr{font-size:20px;font-weight:700;color:var(--dark);letter-spacing:-.3px;margin-bottom:4px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.nr-arr{color:var(--teal);font-size:16px}
+.ntags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.nwhy{font-size:14px;color:var(--mid);line-height:1.6}
+.nwhy strong{color:var(--dark);font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ OVERVIEW ══════════════ -->
+<div id="ov" class="page active">
+  <div class="oh">
+    <h1>Bermuda<br>Dining Guide</h1>
+    <div class="sub">July 9 – 13, 2026</div>
+    <div class="hotel">📍 Rosewood Tucker's Point</div>
+  </div>
+  <div class="ob">
+
+    <div class="ib-btn" onclick="go('rx')">
+      <div class="ib-ico">🗓️</div>
+      <div class="ib-txt">
+        <h3>Recommended for Your Stay</h3>
+        <p>Night-by-night picks · July 9 – 12</p>
+      </div>
+      <div class="ib-arr">›</div>
+    </div>
+
+    <div class="sl"><h2>🌊 Beachfront Dining</h2><span class="ct">3 spots</span></div>
+
+    <div class="rc" onclick="go('co')">
+      <img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-header-1-658082162bf58.jpg" alt="Coconuts" loading="lazy">
+      <div class="cb">
+        <div class="ct-row"><span class="tag teal">Beachfront</span><span class="tag gray">Fine Dining</span><span class="dist">~35 min</span></div>
+        <div class="cn">Coconuts at The Reefs</div>
+        <div class="cd">Bermuda's most celebrated beachfront restaurant — white-linen dining perched between pink sand and dramatic cliffs, with the Atlantic stretching to the horizon.</div>
+      </div>
+    </div>
+
+    <div class="rc" onclick="go('pb')">
+      <img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd06ad71f2dbd00c7e_loren-bermuda-pink-beach-fish-dish.avif" alt="Pink Beach Club" loading="lazy">
+      <div class="cb">
+        <div class="ct-row"><span class="tag teal">Beachfront</span><span class="tag gray">Open Air</span><span class="dist">~5 min</span></div>
+        <div class="cn">The Pink Beach Club</div>
+        <div class="cd">Open-air dining with uninterrupted Atlantic views at The Loren. Mediterranean and Asian-inspired cuisine using locally sourced ingredients from Bermuda's waters and farms.</div>
+      </div>
+    </div>
+
+    <div class="rc" onclick="go('bc')">
+      <img src="https://picasso.rosewoodhotelgroup.com/transform/4f868101-0faa-498f-b03c-d3687c38c1e5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_BeachClub_FountainPool_6" alt="Rosewood Beach Club" loading="lazy">
+      <div class="cb">
+        <div class="ct-row"><span class="tag teal">Beachfront</span><span class="tag amber">Guests Only</span><span class="dist">On-property</span></div>
+        <div class="cn">Rosewood Beach Club</div>
+        <div class="cd">Fresh seafood, sushi, and seasonal BBQ on Bermuda's largest private beach — relaxed yet elegant, exclusive to Rosewood guests.</div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+    <div class="sl"><h2>🕯️ Other Great Restaurants</h2><span class="ct">3 spots</span></div>
+
+    <div class="rc" onclick="go('ib')">
+      <img src="https://picasso.rosewoodhotelgroup.com/transform/494e02e2-be63-4b12-943c-6de61e5c29a5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_4" alt="Island Brasserie" loading="lazy">
+      <div class="cb">
+        <div class="ct-row"><span class="tag teal">Steakhouse</span><span class="tag gray">Seafood</span><span class="dist">On-property</span></div>
+        <div class="cn">Island Brasserie</div>
+        <div class="cd">Rosewood's signature restaurant — prime cuts, fresh seafood, and tableside carving in a colonial-warm setting adorned with rare original Pan Am murals.</div>
+      </div>
+    </div>
+
+    <div class="rc" onclick="go('bg')">
+      <img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120468-968K8Y941HTRPGTR4ILH/bg1.jpg" alt="Barracuda Grill" loading="lazy">
+      <div class="cb">
+        <div class="ct-row"><span class="tag teal">Fine Dining</span><span class="tag gray">DiRoNA Award</span><span class="dist">~30 min</span></div>
+        <div class="cn">Barracuda Grill</div>
+        <div class="cd">Bermuda's most acclaimed fine dining institution for nearly 20 years — outstanding seafood and chops with impeccable service and a celebrated cocktail bar.</div>
+      </div>
+    </div>
+
+    <div class="rc" onclick="go('ip')">
+      <img src="https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-intrepid-1100x550.jpg" alt="Intrepid" loading="lazy">
+      <div class="cb">
+        <div class="ct-row"><span class="tag teal">Raw Bar</span><span class="tag gray">Art Deco</span><span class="dist">~30 min</span></div>
+        <div class="cn">Intrepid</div>
+        <div class="cd">Steak, seafood & raw bar with panoramic Hamilton Harbour views. Art Deco interior, premier oyster program, and prime cuts dry-aged by New Jersey's finest purveyors.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ COCONUTS ══════════════ -->
+<div id="co" class="page">
+  <div class="dn">
+    <button class="bb" onclick="go('ov')">
+      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dining Guide
+    </button>
+    <span class="nt">Beachfront · Southampton</span>
+  </div>
+  <div class="gw" id="gw-co">
+    <div class="gt" id="gt-co">
+      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-header-1-658082162bf58.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-coconutsthereefsbermuda-beachfrontromance-65ae8196b59ad.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-beachbbq-65b2869404acb.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/reefsresort-ourresort-header-6543f0af2ae11.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="gd" id="gd-co"></div>
+  </div>
+  <div class="dc">
+    <div class="dbadge"><span class="tag teal">🌊 Beachfront</span></div>
+    <div class="dname">Coconuts at The Reefs</div>
+    <div class="dcard">
+      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">White-linen dining perched between pink sand and dramatic cliffs, with the Atlantic stretching to the horizon. One of Bermuda's most romantic settings — magical at sunset. Tables directly on the beach or on an elevated terrace.</div></div>
+      <div class="dr"><div class="dl">Distance</div><div class="dv">~35 minutes · South Shore, Southampton Parish</div></div>
+      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Caribbean-inspired fine dining — fresh-caught local fish, prime cuts, conch duo, octopus, lobster rolls, and the signature Bermuda fish chowder with sherry pepper and black rum</div></div>
+      <div class="dr"><div class="dl">Hours</div><div class="dv">Lunch 12–5pm · Dinner 6–10pm daily</div></div>
+    </div>
+    <div class="ff"><span class="ffi">★</span><span class="fft">One of the very few restaurants in Bermuda actually situated on the beach itself — set between the sand and the cliffs, not merely near the water.</span></div>
+    <div class="ms">
+      <div class="mh">Menus</div>
+      <a class="ml" href="https://www.thereefs.com/beachfront-bermuda-restaurants/coconuts-the-reefs-bermuda" target="_blank"><span>🌐 Full Menu (Website)</span><span class="ma">›</span></a>
+    </div>
+    <a class="rbtn" href="https://www.opentable.com/restref/client/?rid=1294549&restref=1294549" target="_blank">Reserve on OpenTable</a>
+    <a class="pbtn" href="tel:4412380222">Call 441-238-0222</a>
+    <div class="hn">Reservations strongly recommended</div>
+  </div>
+</div>
+
+<!-- ══════════════ PINK BEACH CLUB ══════════════ -->
+<div id="pb" class="page">
+  <div class="dn">
+    <button class="bb" onclick="go('ov')">
+      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dining Guide
+    </button>
+    <span class="nt">Beachfront · Tucker's Town</span>
+  </div>
+  <div class="gw" id="gw-pb">
+    <div class="gt" id="gt-pb">
+      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd9bf6d4ddc4ab7371_loren-bermuda-pink-beach-man-pouring-champagne.avif" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd06ad71f2dbd00c7e_loren-bermuda-pink-beach-fish-dish.avif" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd031aa00075831c8b_loren-bermuda-pink-beach-food-on-table.avif" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cda55d11ef9f98da75_loren-bermuda-pink-beach-veggie-bowl.avif" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cf8da87495a7a40286_loren-bermuda-drink-pour-at-table.avif" alt="" loading="lazy"></div>
+    </div>
+    <div class="gd" id="gd-pb"></div>
+  </div>
+  <div class="dc">
+    <div class="dbadge"><span class="tag teal">🌊 Beachfront</span></div>
+    <div class="dname">The Pink Beach Club at The Loren</div>
+    <div class="dcard">
+      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Open-air and relaxed-elegant, with uninterrupted Atlantic Ocean views from every table. Transitions effortlessly from sunset cocktails into dinner under the stars on a wooden deck hovering above the ocean's edge.</div></div>
+      <div class="dr"><div class="dl">Distance</div><div class="dv">~5 minutes · Tucker's Town (same parish as the Rosewood)</div></div>
+      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Mediterranean and Asian-inspired — sushi, crab cakes, fresh ahi tuna, grilled lamb rack, chimichurri hanger steak; locally sourced ingredients from Bermuda's waters and farms</div></div>
+      <div class="dr"><div class="dl">Hours</div><div class="dv">Breakfast 7–11am · Lunch 11am–5pm · Dinner 5–10pm · Sunday Brunch 11am–3pm</div></div>
+    </div>
+    <div class="ff"><span class="ffi">★</span><span class="fft">The Loren sits on one of Bermuda's famous pink sand beaches — the blush color comes from crushed coral and red foraminifera shells mixed into the sand.</span></div>
+    <div class="ms">
+      <div class="mh">Menus · Spring 2026</div>
+      <a class="ml" href="https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/69e0db6bbe3f74f5853e036e_03TheLoren-Bermuda-Menu-2026-Spring-Dinner.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/69e0db84d261115ad07d8256_02TheLoren-Bermuda-Menu-2026-Spring-Lunch.pdf" target="_blank"><span>☀️ Lunch Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/6977bc76eb257377575071ea_TheLoren-Bermuda-Menu-%202025-%20Fall-DrinksWineSpirits.pdf" target="_blank"><span>🍷 Wine & Cocktails</span><span class="ma">›</span></a>
+    </div>
+    <a class="rbtn" href="https://www.opentable.com/r/the-pink-beach-club-tuckers-town" target="_blank">Reserve on OpenTable</a>
+    <a class="pbtn" href="tel:4412931666">Call 441-293-1666</a>
+  </div>
+</div>
+
+<!-- ══════════════ ROSEWOOD BEACH CLUB ══════════════ -->
+<div id="bc" class="page">
+  <div class="dn">
+    <button class="bb" onclick="go('ov')">
+      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dining Guide
+    </button>
+    <span class="nt">On-property · Guests Only</span>
+  </div>
+  <div class="gw" id="gw-bc">
+    <div class="gt" id="gt-bc">
+      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/4f868101-0faa-498f-b03c-d3687c38c1e5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_BeachClub_FountainPool_6" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/68fff49e-2fb1-438c-b137-79867e297375/RWTKP_3-0_Brand-com_Assets_Facilities_Exteriors_Aerial_BeachClub_5" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/968e23bf-df0c-4f8d-bdfe-f04de1df0c9b/RWTKP_3-0_Brand-com_Assets_Facilities_Exteriors_Aerial_BeachClub_2" alt="" loading="lazy"></div>
+    </div>
+    <div class="gd" id="gd-bc"></div>
+  </div>
+  <div class="dc">
+    <div class="dbadge"><span class="tag teal">🌊 Beachfront</span><span class="tag amber">Guests Only</span></div>
+    <div class="dname">Rosewood Beach Club</div>
+    <div class="dcard">
+      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Relaxed yet polished — arching fountains, strung lights, and Bermuda's largest private beach as your backdrop. The easiest evening of the trip: no car, no reservations, just walk down to the water.</div></div>
+      <div class="dr"><div class="dl">Distance</div><div class="dv">On-property at Rosewood Tucker's Point</div></div>
+      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Fresh seafood, sushi by Oishii, and seasonal BBQ. Marketplace-style selection of local and imported seafood paired with refreshing cocktails and a curated wine list</div></div>
+      <div class="dr"><div class="dl">Hours</div><div class="dv">Lunch 11:30am–5pm · Dinner 5–9pm · Bar from 11am daily</div></div>
+    </div>
+    <div class="ms">
+      <div class="mh">Menus</div>
+      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/Beach%20Club%20Dinner%20Menu_26%20March.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/Beach%20Club%20Lunch%20Menu_12th%20March.pdf" target="_blank"><span>☀️ Lunch Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/BC_Beach%20and%20Pool%20Menu.pdf" target="_blank"><span>🏖️ Beach & Pool Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/beach_club_cocktails.pdf" target="_blank"><span>🍹 Cocktails</span><span class="ma">›</span></a>
+    </div>
+    <a class="rbtn" href="mailto:rwtpc.fbres@rosewoodhotels.com">Inquire via Email</a>
+    <a class="pbtn" href="tel:14412986990">Call +1 441-298-6990</a>
+    <div class="hn">Contact the Rosewood concierge to arrange</div>
+  </div>
+</div>
+
+<!-- ══════════════ ISLAND BRASSERIE ══════════════ -->
+<div id="ib" class="page">
+  <div class="dn">
+    <button class="bb" onclick="go('ov')">
+      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dining Guide
+    </button>
+    <span class="nt">On-property · Rosewood</span>
+  </div>
+  <div class="gw" id="gw-ib">
+    <div class="gt" id="gt-ib">
+      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/494e02e2-be63-4b12-943c-6de61e5c29a5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_4" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/25657051-9717-46bc-9641-d4aa5a5fa2b7/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_3" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/5c65ecd1-edef-4a44-942c-861b3802160c/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_1" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/d2f54c32-8911-425c-8be6-b49c1c91e47f/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_SkyClubMuralDetail_1" alt="" loading="lazy"></div>
+    </div>
+    <div class="gd" id="gd-ib"></div>
+  </div>
+  <div class="dc">
+    <div class="dbadge"><span class="tag gray">🕯️ On-property</span></div>
+    <div class="dname">Island Brasserie</div>
+    <div class="dcard">
+      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Colonial warmth and intimate sophistication — cathedral ceilings with exposed cedar beams, candlelight, and one-of-a-kind historic murals. Formal without being stiff; terrace offers views of Harrington Sound.</div></div>
+      <div class="dr"><div class="dl">Distance</div><div class="dv">On-property at Rosewood Tucker's Point</div></div>
+      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Modern steakhouse — prime cuts including Chateaubriand and Tomahawk for two, carved tableside. Fresh local seafood alongside global cuts. Smart Casual dress code.</div></div>
+      <div class="dr"><div class="dl">Hours</div><div class="dv">Breakfast 7–11am · Lunch 11am–5:30pm · Dinner 5:30–9pm daily</div></div>
+    </div>
+    <div class="ff"><span class="ffi">★</span><span class="fft">The dining room features original murals commissioned by Pan American Airways founder Juan Trippe for the legendary Sky Club at New York's Pan Am Building — depicting ports of call from the golden age of travel.</span></div>
+    <div class="ms">
+      <div class="mh">Menus · 2026</div>
+      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/IB%20DINNER%20Jan%202026.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/IslandBrasserie_Wine%20List.pdf" target="_blank"><span>🍷 Wine List</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/IB%20COCKTAIL%20LIST%202026.pdf" target="_blank"><span>🍸 Cocktail List</span><span class="ma">›</span></a>
+    </div>
+    <a class="rbtn" href="https://www.sevenrooms.com/explore/islandbrasserierwber/reservations/create/search/" target="_blank">Make a Reservation</a>
+    <a class="pbtn" href="tel:14412984071">Call +1 441-298-4071</a>
+  </div>
+</div>
+
+<!-- ══════════════ BARRACUDA GRILL ══════════════ -->
+<div id="bg" class="page">
+  <div class="dn">
+    <button class="bb" onclick="go('ov')">
+      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dining Guide
+    </button>
+    <span class="nt">Hamilton · ~30 min</span>
+  </div>
+  <div class="gw" id="gw-bg">
+    <div class="gt" id="gt-bg">
+      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120468-968K8Y941HTRPGTR4ILH/bg1.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120374-26ZFZT6FWOSWS45MH6I3/bg2.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070121736-F83UABMGB0T8UD9SVAUM/bg3.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070123165-P56C51KD0FW82X0Y8129/bg4.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070363759-6PJTS777VXZQG8TM01II/bg5.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="gd" id="gd-bg"></div>
+  </div>
+  <div class="dc">
+    <div class="dbadge"><span class="tag gray">🕯️ Hamilton</span></div>
+    <div class="dname">Barracuda Grill</div>
+    <div class="dcard">
+      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Elegant and polished with warm lighting and an intimate feel — refined without pretension. Bermuda's most enduring fine dining institution. The bar, a multiple Best of Bermuda award winner, is worth arriving early for.</div></div>
+      <div class="dr"><div class="dl">Distance</div><div class="dv">~30 minutes · 5 Burnaby Hill, Hamilton</div></div>
+      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Contemporary seafood and chops — locally sourced fresh fish, shellfish, and prime beef. Seasonal menu changes with market availability; excellent wine list and cocktail program.</div></div>
+      <div class="dr"><div class="dl">Hours</div><div class="dv">Lunch Mon–Fri 12–2:30pm · Dinner daily 5:30–10pm · Bar until 11pm</div></div>
+    </div>
+    <div class="ff"><span class="ffi">★</span><span class="fft">Barracuda Grill holds the DiRoNA award (Distinguished Restaurants of North America) — one of the most prestigious fine dining honors in the hemisphere, held by only a handful of Bermuda restaurants.</span></div>
+    <div class="ms">
+      <div class="mh">Menus</div>
+      <a class="ml" href="https://www.irg.bm/s/Barracuda-Dinner-SEPT-2025-FINAL-for-Print-V113.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.irg.bm/s/Barracuda-Lunch-SEPT-2025-FINAL-for-Print-V113.pdf" target="_blank"><span>☀️ Lunch Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.irg.bm/s/BG-Cocktails-Dinner-April-26.pdf" target="_blank"><span>🍸 Cocktail List</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.irg.bm/s/BG-Wine-List-May-26.pdf" target="_blank"><span>🍷 Wine List</span><span class="ma">›</span></a>
+    </div>
+    <a class="rbtn" href="https://www.opentable.com/r/barracuda-grill-hamilton" target="_blank">Reserve on OpenTable</a>
+    <a class="pbtn" href="tel:4412921609">Call 441-292-1609</a>
+    <div class="hn">Reservations strongly recommended</div>
+  </div>
+</div>
+
+<!-- ══════════════ INTREPID ══════════════ -->
+<div id="ip" class="page">
+  <div class="dn">
+    <button class="bb" onclick="go('ov')">
+      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dining Guide
+    </button>
+    <span class="nt">Hamilton Princess · ~30 min</span>
+  </div>
+  <div class="gw" id="gw-ip">
+    <div class="gt" id="gt-ip">
+      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-intrepid-1100x550.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2024/01/intrepid-restaurant-top-banner-Jan24-02-1600x555.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-steak-07-1600x555.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2025/03/BannerContent_Hamilton-Princess-food-1100x550.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-cocktail06-1600x555.jpg" alt="" loading="lazy"></div>
+      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-entrance-04-1600x555.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="gd" id="gd-ip"></div>
+  </div>
+  <div class="dc">
+    <div class="dbadge"><span class="tag gray">🕯️ Hamilton</span></div>
+    <div class="dname">Intrepid</div>
+    <div class="dcard">
+      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Art Deco-inspired interior with panoramic Hamilton Harbour views — sophisticated and lively, anchored by a stunning raw bar. The restaurant grows its own herbs in raised beds just outside, overlooking the harbour.</div></div>
+      <div class="dr"><div class="dl">Distance</div><div class="dv">~30 minutes · Hamilton Princess, 76 Pitts Bay Road</div></div>
+      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Steak, seafood & raw bar — oysters, caviar, temaki sushi station, prime cuts dry-aged by Niman Ranch and Debragga & Spitler. Highlights: Lump Crab Cake, Oysters Rockefeller, Intrepid Maki Roll with lobster.</div></div>
+      <div class="dr"><div class="dl">Hours</div><div class="dv">Dinner Mon–Sat 6–10pm · Cocktails from 5pm · Closed Sundays</div></div>
+    </div>
+    <div class="ff"><span class="ffi">★</span><span class="fft">Named after William Stephenson, a WWII British intelligence agent who ran his spy network from this very hotel under the codename "Intrepid" — widely believed to be one of the real-life inspirations for James Bond. The restaurant features a commanding KAWS original artwork above the private dining room.</span></div>
+    <div class="ms">
+      <div class="mh">Menus</div>
+      <a class="ml" href="https://www.thehamiltonprincess.com/wp-content/uploads/2025/11/PRIN_Intrepid_Menu_5Nov25.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.thehamiltonprincess.com/wp-content/uploads/2025/11/PRIN_Intrepid_DESSERT_Menu_05Nov25.pdf" target="_blank"><span>🍮 Dessert Menu</span><span class="ma">›</span></a>
+      <a class="ml" href="https://www.thehamiltonprincess.com/wp-content/uploads/2026/03/Intrepid-Cocktail-Menu-23Mar26.pdf" target="_blank"><span>🍸 Cocktail Menu</span><span class="ma">›</span></a>
+    </div>
+    <a class="rbtn" href="https://www.opentable.com/r/intrepid-hamilton-princess-and-beach-club-hamilton" target="_blank">Reserve on OpenTable</a>
+    <a class="pbtn" href="tel:14412982028">Call +1 441-298-2028</a>
+    <div class="hn">Advance reservations strongly encouraged · Closed Sundays</div>
+  </div>
+</div>
+
+<!-- ══════════════ RECOMMENDATIONS ══════════════ -->
+<div id="rx" class="page">
+  <div class="dn">
+    <button class="bb" onclick="go('ov')"><svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9,1 2,8 9,15"/></svg>&nbsp;Guide</button>
+    <span class="nt">July 2026</span>
+  </div>
+  <div class="rh">
+    <h1>Recommended<br>for Your Stay</h1>
+    <div class="sub">Night-by-night picks · Rosewood Tucker's Point</div>
+  </div>
+  <div class="nights">
+
+    <!-- Night 1 -->
+    <div class="nc">
+      <div class="nd">
+        <div>
+          <div class="nd-date">Thursday · July 9</div>
+          <div class="nd-night">Night 1 · Arrival Evening</div>
+        </div>
+      </div>
+      <div class="nb">
+        <div class="nr" onclick="go('pb')">The Pink Beach Club <span class="nr-arr">›</span></div>
+        <div class="ntags"><span class="tag teal">Beachfront</span><span class="tag gray">~5 min</span><span class="tag gray">Open Air</span></div>
+        <div class="nwhy">After a travel day, the last thing you want is a long drive or complicated logistics. The Pink Beach Club is <strong>five minutes from the Rosewood</strong>, which means you can settle in, freshen up, and be at the table watching the sun go down over the Atlantic without any stress. The open-air setting is immediately transporting — it announces that you're really here — and the kitchen turns out some of the best fresh seafood on the island, with enough variety on the menu that everyone will find something to love.</div>
+      </div>
+    </div>
+
+    <!-- Night 2 -->
+    <div class="nc">
+      <div class="nd">
+        <div>
+          <div class="nd-date">Friday · July 10</div>
+          <div class="nd-night">Night 2 · Night on the Town</div>
+        </div>
+      </div>
+      <div class="nb">
+        <div class="nr" onclick="go('bg')">Barracuda Grill <span class="nr-arr">›</span></div>
+        <div class="ntags"><span class="tag teal">Fine Dining</span><span class="tag gray">~30 min</span><span class="tag gray">DiRoNA Award</span></div>
+        <div class="nwhy">Barracuda Grill is the restaurant Bermudans themselves reserve for their most important occasions, and it shows. The kitchen has held the DiRoNA award — one of the hemisphere's most prestigious dining honors — for years, and the menu balances <strong>exceptional fresh seafood</strong> with prime chops, so the table is fully covered. Going tonight gives you a proper night out in Hamilton, Bermuda's capital, before the birthday festivities the following evening. Book the early seating so you can take your time.</div>
+      </div>
+    </div>
+
+    <!-- Night 3 — Birthday -->
+    <div class="nc">
+      <div class="nd" style="background:linear-gradient(90deg,#C8963E,#A87130)">
+        <div>
+          <div class="nd-date">Saturday · July 11</div>
+          <div class="nd-night">Night 3 · Diane's 80th Birthday</div>
+        </div>
+        <span class="bday-badge">🎂 80th</span>
+      </div>
+      <div class="nb">
+        <div class="nr" onclick="go('co')">Coconuts at The Reefs <span class="nr-arr">›</span></div>
+        <div class="ntags"><span class="tag teal">Beachfront</span><span class="tag gray">~35 min</span><span class="tag gray">Fine Dining</span></div>
+        <div class="nwhy">This is the one. Coconuts is Bermuda's most celebrated beach dinner — <strong>white-linen tables set between pink sand and dramatic cliffs</strong>, with the Atlantic stretching to the horizon in every direction. Very few restaurants in Bermuda are actually situated on the beach itself rather than just near the water, and the setting at sunset is genuinely extraordinary. The drive is worth every minute. Call ahead to mention the birthday — the team there is known for making special occasions feel exactly that way.</div>
+      </div>
+    </div>
+
+    <!-- Night 4 -->
+    <div class="nc">
+      <div class="nd">
+        <div>
+          <div class="nd-date">Sunday · July 12</div>
+          <div class="nd-night">Night 4 · Final Evening</div>
+        </div>
+      </div>
+      <div class="nb">
+        <div class="nr" onclick="go('ib')">Island Brasserie <span class="nr-arr">›</span></div>
+        <div class="ntags"><span class="tag teal">Steakhouse</span><span class="tag gray">On-property</span><span class="tag gray">Seafood</span></div>
+        <div class="nwhy">For the last evening, there's something to be said for not going anywhere at all. Island Brasserie is Rosewood's signature restaurant — <strong>prime cuts, fresh seafood, and tableside carving</strong> in a warm, candlelit setting hung with original murals from Pan American Airways' legendary Sky Club. It's elegant without being a production, and staying on-property means the night ends at your own pace, with a short walk back whenever you're ready. A fitting close to the trip.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Routing ──────────────────────────────────────────
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── Gallery ──────────────────────────────────────────
+const G={};
+function initGallery(id,count){
+  const wrap=document.getElementById('gw-'+id);
+  const track=document.getElementById('gt-'+id);
+  const dots=document.getElementById('gd-'+id);
+  for(let i=0;i<count;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===0?' on':'');
+    dots.appendChild(d);
+  }
+  G[id]={cur:0,count,track,dots};
+  let sx=0,sy=0;
+  wrap.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+  wrap.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>38) slide(id,dx<0?1:-1);
+  },{passive:true});
+}
+function slide(id,dir){
+  const g=G[id];
+  g.cur=Math.max(0,Math.min(g.count-1,g.cur+dir));
+  g.track.style.transform=`translateX(-${g.cur*100}%)`;
+  g.dots.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===g.cur));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  initGallery('co',4);
+  initGallery('pb',5);
+  initGallery('bc',3);
+  initGallery('ib',4);
+  initGallery('bg',5);
+  initGallery('ip',6);
+});
+</script>
+</body>
+</html>
