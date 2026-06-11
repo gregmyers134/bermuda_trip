@@ -808,6 +808,13 @@ function initMap(){
   // Rosewood home marker
   L.marker([32.3416,-64.6907],{icon:L.divIcon({className:"",html:'<div style="background:#0B3954;color:#fff;border:2.5px solid #fff;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.35)">🏨 Rosewood</div>',iconSize:[90,24],iconAnchor:[45,12]}),zIndexOffset:-100}).addTo(map);
   renderMarkers(R);
+  fitAllPins();
+  setTimeout(function(){map.invalidateSize();fitAllPins();},350);
+  window.addEventListener("load",function(){map.invalidateSize();fitAllPins();});
+  if(window.ResizeObserver)new ResizeObserver(function(){map.invalidateSize();}).observe(document.getElementById("map"));
+}
+function fitAllPins(){
+  map.fitBounds(L.latLngBounds(R.map(function(r){return [r.lat,r.lng];})),{padding:[30,30]});
 }
 function renderMarkers(list){
   Object.values(markers).forEach(m=>map.removeLayer(m));markers={};
