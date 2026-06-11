@@ -183,6 +183,14 @@ h3.dc-h{font-size:17px;color:var(--navy);margin-bottom:10px}
 .empty-state{text-align:center;padding:60px 20px;color:var(--light)}
 .empty-state .big{font-size:42px;margin-bottom:10px}
 footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46px}
+/* lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(8,25,34,.92);z-index:3000;display:none;align-items:center;justify-content:center;gap:14px;padding:20px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:86vw;max-height:82vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.lb-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.18);color:#fff;width:38px;height:38px;border-radius:50%;font-size:17px;z-index:2}
+.lb-count{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:rgba(255,255,255,.85);font-size:13px;font-weight:600}
+.dir-links a{font-weight:700}
+@media(min-width:1000px){.grid>.card:last-child:nth-child(3n+1){grid-column:2}}
 @media(max-width:640px){
   #map{height:330px}
   .hero{min-height:280px}
@@ -313,6 +321,14 @@ footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46p
 <!-- ============ MAP MODAL ============ -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalBox"></div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="slide-nav prev" onclick="lbMove(-1,event)">‹</button>
+  <img id="lbImg" alt="enlarged restaurant photo" onclick="event.stopPropagation()">
+  <button class="slide-nav next" onclick="lbMove(1,event)">›</button>
+  <div class="lb-count" id="lbCount"></div>
 </div>
 
 <footer>Made with love for Megan &amp; Diane · Rosewood Tucker's Point · July 9–13, 2026<br>Ratings from Google, TripAdvisor or OpenTable as noted. Confirm seasonal venues by phone.</footer>
@@ -639,6 +655,8 @@ const LSF="bermuda_favs", LSN="bermuda_notes";
 let favs = JSON.parse(localStorage.getItem(LSF)||"[]");
 let notes = JSON.parse(localStorage.getItem(LSN)||"{}");
 const byId = id => R.find(r=>r.id===id);
+const ORDER=["coconuts","pinkbeach","beachclub","brasserie","barracuda","intrepid","maree","sulverde","lina","achilles","harbourfront","harrys","blu","surf","waterlot","solaris","cedar","sunken","crown","r1609","pickled","marea","henry","gulfstream","breezes","bonefish","anchor","pantry","rustico","whitehorse","wharf","tobacco","sunjammers","dock","woodys","calico","hammerheads","shellybay","wahoos","blackhorse"];
+const ordIdx=id=>{const i=ORDER.indexOf(id);return i<0?999:i;};
 const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
 function saveFavs(){localStorage.setItem(LSF,JSON.stringify(favs));updateFavCount();}
@@ -745,7 +763,7 @@ function filtered(){
   });
 }
 function applyFilters(){
-  const list=filtered();
+  const list=filtered().sort((a,b)=>ordIdx(a.id)-ordIdx(b.id));
   document.getElementById("resultCount").textContent=
     list.length===R.length?"Showing all "+R.length+" restaurants":"Showing "+list.length+" of "+R.length+" restaurants";
   renderCards(list);
@@ -760,12 +778,14 @@ function tagsHtml(r){
   t+='<span class="tag">'+r.cuisine+'</span>';
   t+='<span class="tag">'+(r.meal==="both"?"Lunch & dinner":r.meal==="lunch"?"Lunch spot":"Dinner spot")+'</span>';
   t+='<span class="tag">🚗 '+(r.drive===0?"On property":r.drive+" min")+'</span>';
-  t+='<span class="tag">'+r.price+'</span>';
   return t;
 }
 function ratingHtml(r){
   if(!r.rating)return '<span class="rating"><span class="src">unrated</span></span>';
   return '<span class="rating"><span class="star">★</span>'+r.rating.toFixed(1)+'<span class="src">('+r.reviews+' · '+r.src+')</span></span>';
+}
+function dirHtml(r){
+  return '<a href="https://www.google.com/maps/dir/?api=1&destination='+r.lat+','+r.lng+'" target="_blank" rel="noopener">Google Maps ↗</a> &nbsp;·&nbsp; <a href="https://maps.apple.com/?daddr='+r.lat+','+r.lng+'" target="_blank" rel="noopener">Apple Maps ↗</a>';
 }
 
 /* ================= CARDS ================= */
@@ -835,14 +855,14 @@ function slidesHtml(r,key,h){
   slideState[key]=0;
   let inner;
   if(!n) inner='<div class="slide cur"><div class="slide-ph">'+r.name+'</div></div>';
-  else inner=r.imgs.map((u,i)=>'<div class="slide'+(i===0?" cur":"")+'" data-i="'+i+'"><img loading="lazy" src="'+u+'" alt="'+esc(r.name)+' photo '+(i+1)+'" onerror="this.parentElement.innerHTML=\'<div class=slide-ph>'+esc(r.name).replace(/'/g,"")+'</div>\'"></div>').join("");
+  else inner=r.imgs.map((u,i)=>'<div class="slide'+(i===0?" cur":"")+'" data-i="'+i+'"><img loading="lazy" src="'+u+'" alt="'+esc(r.name)+' photo '+(i+1)+'"'+(key==="detail"?' onclick="openLightbox(\''+r.id+'\','+i+')" style="cursor:zoom-in"':"")+' onerror="this.parentElement.innerHTML=\'<div class=slide-ph>'+esc(r.name).replace(/'/g,"")+'</div>\'"></div>').join("");
   let nav="";
   if(n>1){
     nav='<button class="slide-nav prev" onclick="moveSlide(\''+key+'\',-1,event)">‹</button>'+
         '<button class="slide-nav next" onclick="moveSlide(\''+key+'\',1,event)">›</button>'+
         '<div class="dots">'+r.imgs.map((_,i)=>'<div class="dot'+(i===0?" cur":"")+'"></div>').join("")+'</div>';
   }
-  return '<div class="slides" data-slides="'+key+'" style="height:'+h+'px">'+inner+nav+'</div>';
+  return '<div class="slides" data-slides="'+key+'" style="height:'+h+'">'+inner+nav+'</div>';
 }
 function moveSlide(key,dir,e){
   if(e)e.stopPropagation();
@@ -858,7 +878,7 @@ function openModal(id){
   const r=byId(id);if(!r)return;
   const box=document.getElementById("modalBox");
   box.innerHTML=
-    '<div style="position:relative">'+slidesHtml(r,"modal",215)+
+    '<div style="position:relative">'+slidesHtml(r,"modal","215px")+
     '<button class="modal-close" onclick="closeModal()">✕</button></div>'+
     '<div class="modal-body">'+
       '<h3>'+r.name+'</h3>'+
@@ -867,6 +887,7 @@ function openModal(id){
       (r.status?'<div class="status-flag" style="margin-bottom:10px">⚠ '+r.status+'</div>':"")+
       '<p style="font-size:13.5px;color:var(--mid)">'+r.short+'</p>'+
       '<div style="display:flex;gap:8px;align-items:center;margin-top:12px">'+favBtnHtml(r.id)+noteToggleHtml(r.id)+'</div>'+
+      '<div class="dir-links" style="margin-top:10px;font-size:13px">📍 '+dirHtml(r)+'</div>'+
       notesBoxHtml(r.id)+
       '<button class="modal-link" onclick="go(\'detail\',\''+r.id+'\')">View full page — menus & reservations →</button>'+
     '</div>';
@@ -881,7 +902,20 @@ function closeModal(){
 document.getElementById("modalOverlay").addEventListener("click",e=>{
   if(!document.getElementById("modalBox").contains(e.target))closeModal();
 });
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closeLightbox();closeModal();}
+  if(document.getElementById("lightbox").classList.contains("open")){
+    if(e.key==="ArrowRight")lbMove(1);
+    if(e.key==="ArrowLeft")lbMove(-1);
+  }
+});
+
+/* ================= LIGHTBOX ================= */
+let lbId=null,lbI=0;
+function openLightbox(id,i){lbId=id;lbI=i;renderLb();document.getElementById("lightbox").classList.add("open");document.body.style.overflow="hidden";}
+function renderLb(){const r=byId(lbId);document.getElementById("lbImg").src=r.imgs[lbI];document.getElementById("lbCount").textContent=r.name+" — photo "+(lbI+1)+" of "+r.imgs.length;}
+function lbMove(d,e){if(e)e.stopPropagation();const r=byId(lbId);lbI=(lbI+d+r.imgs.length)%r.imgs.length;renderLb();}
+function closeLightbox(){document.getElementById("lightbox").classList.remove("open");if(!document.getElementById("modalOverlay").classList.contains("open"))document.body.style.overflow="";}
 /* ================= DETAIL PAGE ================= */
 function renderDetail(id){
   const r=byId(id);if(!r)return;
@@ -901,7 +935,7 @@ function renderDetail(id){
   else resBtn='<button class="book-btn" onclick="book(\''+r.id+'\')">'+resLabel+' →</button>';
 
   el.innerHTML=
-    '<div class="detail-hero">'+slidesHtml(r,"detail",9999)+
+    '<div class="detail-hero">'+slidesHtml(r,"detail","100%")+
       '<button class="back-btn" onclick="go(\'home\')">← All restaurants</button></div>'+
     '<div class="detail-wrap">'+
       '<div class="detail-title-row"><div style="flex:1;min-width:220px"><h1>'+r.name+'</h1><div class="detail-sub">'+r.area+' · '+r.region+'</div></div>'+
@@ -918,7 +952,7 @@ function renderDetail(id){
         (r.phone?'<div class="info-item"><div class="k">Phone</div><div class="v"><a href="tel:'+r.phone.replace(/[^+\d]/g,"")+'">'+r.phone+'</a></div></div>':"")+
         (r.email?'<div class="info-item"><div class="k">Email</div><div class="v"><a href="mailto:'+r.email+'">'+r.email+'</a></div></div>':"")+
         '<div class="info-item"><div class="k">Website</div><div class="v"><a href="'+r.web+'" target="_blank" rel="noopener">Visit site ↗</a></div></div>'+
-        '<div class="info-item"><div class="k">Price</div><div class="v">'+r.price+(r.fine?" · Fine dining":"")+'</div></div>'+
+        '<div class="info-item"><div class="k">Directions</div><div class="v dir-links">'+dirHtml(r)+'</div></div>'+
       '</div></div>'+
 
       (r.menus.length?'<div class="detail-card"><h3 class="dc-h">Menus</h3><div class="menu-btns">'+
@@ -979,7 +1013,7 @@ function renderRecs(){
 /* ================= FAVORITES PAGE ================= */
 function renderFavs(){
   const grid=document.getElementById("favGrid"),empty=document.getElementById("favEmpty");
-  const list=R.filter(r=>isFav(r.id));
+  const list=R.filter(r=>isFav(r.id)).sort((a,b)=>ordIdx(a.id)-ordIdx(b.id));
   empty.style.display=list.length?"none":"block";
   grid.innerHTML=list.map(r=>{
     const img=r.imgs.length?'<img class="card-img" loading="lazy" src="'+r.imgs[0]+'" onclick="go(\'detail\',\''+r.id+'\')" onerror="this.outerHTML=phImg(\''+r.id+'\')">':phImg(r.id);
