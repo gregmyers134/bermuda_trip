@@ -858,7 +858,7 @@ function rosewoodIcon(){
   return L.divIcon({className:"",html:'<div style="display:flex;flex-direction:column;align-items:center"><div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#E3B23C,#B8860B);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:18px">🏨</div><div style="background:#0B3954;color:#fff;border-radius:99px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-top:2px;white-space:nowrap;border:1.5px solid #fff">Rosewood</div></div>',iconSize:[96,64],iconAnchor:[48,22]});
 }
 function initMap(){
-  map=L.map("map",{scrollWheelZoom:false}).setView([32.32,-64.76],11);
+  map=L.map("map",{scrollWheelZoom:false,zoomSnap:0.25,zoomDelta:0.5}).setView([32.32,-64.76],11);
   L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
     attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:18}).addTo(map);
   // Rosewood home marker
@@ -877,7 +877,7 @@ function initMap(){
   if(window.ResizeObserver)new ResizeObserver(function(){map.invalidateSize();}).observe(document.getElementById("map"));
 }
 function fitAllPins(){
-  map.fitBounds(L.latLngBounds(R.map(function(r){return [r.lat,r.lng];})),{padding:[30,30]});
+  map.fitBounds(L.latLngBounds(R.map(function(r){return [r.lat,r.lng];})),{paddingTopLeft:[14,40],paddingBottomRight:[14,12]});
 }
 function renderMarkers(list){
   Object.values(markers).forEach(m=>map.removeLayer(m));markers={};
