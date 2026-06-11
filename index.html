@@ -31,8 +31,12 @@ nav{position:sticky;top:0;z-index:1100;background:rgba(11,57,84,.92);backdrop-fi
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:8px;height:56px}
 .nav-brand{color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:17px;margin-right:auto;cursor:pointer;white-space:nowrap}
 .nav-brand span{color:var(--aqua)}
-.nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-.nav-links::-webkit-scrollbar{display:none}
+.nav-links{display:flex;gap:4px;flex-shrink:0}
+@media(max-width:520px){
+  .nav-brand{font-size:15px}
+  .nav-btn{font-size:12px;padding:6px 8px}
+  .nav-inner{gap:4px}
+}
 .nav-btn{color:rgba(255,255,255,.75);font-size:13.5px;font-weight:600;padding:7px 12px;border-radius:99px;white-space:nowrap;transition:.2s}
 .nav-btn.on,.nav-btn:hover{color:#fff;background:rgba(255,255,255,.14)}
 .nav-btn .favcount{background:var(--coral);color:#fff;border-radius:99px;font-size:10.5px;padding:1px 6px;margin-left:4px;font-weight:700}
@@ -77,6 +81,8 @@ nav{position:sticky;top:0;z-index:1100;background:rgba(11,57,84,.92);backdrop-fi
 .pin{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:var(--teal);border:2.5px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.35)}
 .pin svg{transform:rotate(45deg)}
 .pin.faved{background:var(--coral)}
+.map-reset-btn{background:#fff;border:2px solid rgba(0,0,0,.2);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.15)}
+.map-reset-btn:hover{background:var(--sand)}
 .map-hint{font-size:12px;color:var(--light);margin-top:8px;text-align:center}
 
 /* ---------- CARDS GRID ---------- */
@@ -202,7 +208,7 @@ footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46p
 <body>
 <nav>
   <div class="nav-inner">
-    <div class="nav-brand" onclick="go('home')">Bermuda <span>·</span> July 2026</div>
+    <div class="nav-brand" onclick="go('home')">Bermuda</div>
     <div class="nav-links">
       <button class="nav-btn" data-nav="home" onclick="go('home')">Restaurants</button>
       <button class="nav-btn" data-nav="recs" onclick="go('recs')">Our Picks</button>
@@ -852,6 +858,13 @@ function initMap(){
   // Rosewood home marker
   L.marker(RW,{icon:rosewoodIcon(),zIndexOffset:1200}).addTo(map);
   renderMarkers(R);
+  const ResetCtl=L.Control.extend({options:{position:"topleft"},onAdd:function(){
+    const b=L.DomUtil.create("button","map-reset-btn");
+    b.type="button";b.innerHTML="⌂ Reset view";b.title="Reset the map to its original position";
+    L.DomEvent.disableClickPropagation(b);
+    L.DomEvent.on(b,"click",function(e){L.DomEvent.preventDefault(e);fitAllPins();});
+    return b;}});
+  map.addControl(new ResetCtl());
   fitAllPins();
   setTimeout(function(){map.invalidateSize();fitAllPins();},350);
   window.addEventListener("load",function(){map.invalidateSize();fitAllPins();});
