@@ -3,551 +3,1006 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Bermuda Dining Guide · July 2026</title>
+<title>Bermuda Waterfront Dining · July 2026</title>
+<meta name="description" content="Every waterfront restaurant in Bermuda — curated for Diane's 80th birthday trip, July 9–13, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --teal:#1A7A6E;--teal-d:#145F56;--dark:#1C1C1E;--mid:#48484A;
-  --light:#6C6C70;--pale:#8E8E93;--bg:#F2F2F7;--card:#FFFFFF;
-  --border:#E5E5EA;--sand:#F5F0E8;
-  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)
+  --navy:#0B3954; --ink:#10303F; --teal:#11808C; --turq:#1FB6C1; --aqua:#9BE3E0;
+  --coral:#FF6F61; --coral-d:#E8584B; --gold:#D9A441; --sand:#F8F4EC; --sand-d:#EFE6D8;
+  --pink:#F4C7C3; --card:#FFFFFF; --mid:#42606E; --light:#7A93A0; --border:#E3E9EB;
+  --shadow:0 10px 30px rgba(11,57,84,.10); --shadow-sm:0 4px 14px rgba(11,57,84,.08);
+  --r:18px;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--dark);overflow-x:hidden}
-.page{display:none;min-height:100vh}
-.page.active{display:block;animation:fi .22s ease}
-@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--sand);color:var(--ink);line-height:1.55;padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif}
+a{color:var(--teal);text-decoration:none}
+img{display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
 
-/* ── OVERVIEW HEADER ── */
-.oh{background:linear-gradient(160deg,#1A7A6E 0%,#0F5249 100%);padding:calc(var(--st) + 22px) 20px 28px;color:#fff}
-.oh h1{font-size:30px;font-weight:700;letter-spacing:-.6px;line-height:1.1}
-.oh .sub{font-size:14px;opacity:.75;margin-top:4px}
-.oh .hotel{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500;margin-top:10px}
+/* ---------- NAV ---------- */
+nav{position:sticky;top:0;z-index:1100;background:rgba(11,57,84,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:0 16px;padding-top:env(safe-area-inset-top)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:8px;height:56px}
+.nav-brand{color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:17px;margin-right:auto;cursor:pointer;white-space:nowrap}
+.nav-brand span{color:var(--aqua)}
+.nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-btn{color:rgba(255,255,255,.75);font-size:13.5px;font-weight:600;padding:7px 12px;border-radius:99px;white-space:nowrap;transition:.2s}
+.nav-btn.on,.nav-btn:hover{color:#fff;background:rgba(255,255,255,.14)}
+.nav-btn .favcount{background:var(--coral);color:#fff;border-radius:99px;font-size:10.5px;padding:1px 6px;margin-left:4px;font-weight:700}
 
-/* ── SECTION LABELS ── */
-.sl{padding:22px 20px 10px;display:flex;align-items:center;gap:8px}
-.sl h2{font-size:21px;font-weight:700;letter-spacing:-.3px}
-.sl .ct{font-size:13px;color:var(--pale);font-weight:500;margin-left:auto}
-.sdiv{height:8px;background:var(--bg)}
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:330px;display:flex;align-items:flex-end;background:var(--navy)}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,57,84,.15) 0%,rgba(11,57,84,.25) 45%,rgba(11,57,84,.85) 100%)}
+.hero-content{position:relative;z-index:2;max-width:1100px;margin:0 auto;width:100%;padding:90px 20px 30px;color:#fff}
+.hero-eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--aqua);margin-bottom:8px}
+.hero h1{font-size:clamp(30px,5.5vw,52px);font-weight:700;line-height:1.08;margin-bottom:10px;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.hero p{font-size:15px;max-width:640px;color:rgba(255,255,255,.92)}
+.hero-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.hero-stat{background:rgba(255,255,255,.16);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 14px;font-size:12.5px;font-weight:600}
 
-/* ── CARDS ── */
-.rc{margin:0 16px 14px;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);cursor:pointer;transition:transform .14s}
-.rc:active{transform:scale(.975)}
-.rc img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--border)}
-.cb{padding:14px 16px 16px}
-.ct-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;letter-spacing:.3px;text-transform:uppercase}
-.teal{background:#E0F2F0;color:var(--teal)}
-.gray{background:var(--bg);color:var(--pale)}
-.amber{background:#FFF3E0;color:#E65100}
-.dist{font-size:12px;color:var(--pale);font-weight:500;margin-left:auto}
-.cn{font-size:20px;font-weight:700;letter-spacing:-.3px;color:var(--dark);line-height:1.2;margin-bottom:5px}
-.cd{font-size:14px;color:var(--mid);line-height:1.5}
+/* ---------- LAYOUT ---------- */
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.page{display:none}
+.page.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.section-head{display:flex;align-items:baseline;gap:12px;margin:28px 0 14px;flex-wrap:wrap}
+.section-head h2{font-size:24px;color:var(--navy)}
+.section-head .sub{color:var(--light);font-size:13.5px}
 
-/* ── DETAIL NAV ── */
-.dn{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--st) + 12px) 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center}
-.bb{display:flex;align-items:center;gap:5px;color:var(--teal);font-size:16px;font-weight:500;background:none;border:none;cursor:pointer;min-height:44px;padding:0}
-.bb svg{width:10px;height:16px;flex-shrink:0}
-.nt{font-size:13px;color:var(--pale);font-weight:500;margin-left:auto}
+/* ---------- FILTERS ---------- */
+.filterbar{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:16px;margin-top:-26px;position:relative;z-index:10;border:1px solid var(--border)}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.filter-row + .filter-row{margin-top:10px}
+.fgroup{display:flex;flex-direction:column;gap:4px}
+.fgroup label{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--light)}
+.fgroup select{appearance:none;-webkit-appearance:none;background:var(--sand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2342606E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;border:1px solid var(--border);border-radius:10px;padding:8px 28px 8px 10px;font-size:13px;font-weight:600;color:var(--ink);font-family:inherit}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--border);background:#fff;color:var(--mid);border-radius:99px;padding:7px 13px;font-size:12.5px;font-weight:600;transition:.15s}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.chip.fav-chip.on{background:var(--coral);border-color:var(--coral)}
+.reset-btn{margin-left:auto;color:var(--coral-d);font-size:12.5px;font-weight:700;padding:6px 4px}
+.result-count{font-size:13px;color:var(--mid);font-weight:600;margin:14px 2px 0}
 
-/* ── GALLERY ── */
-.gw{position:relative;overflow:hidden;background:#111;aspect-ratio:4/3}
-.gt{display:flex;height:100%;transition:transform .3s cubic-bezier(.25,.46,.45,.94);will-change:transform}
-.gs{min-width:100%;height:100%}
-.gs img{width:100%;height:100%;object-fit:cover;display:block}
-.gd{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;pointer-events:none}
-.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45);transition:all .2s}
-.dot.on{background:#fff;width:18px;border-radius:3px}
+/* ---------- MAP ---------- */
+#map{height:440px;border-radius:var(--r);box-shadow:var(--shadow);margin-top:16px;z-index:1}
+.leaflet-container{font-family:'Inter',sans-serif}
+.pin{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:var(--teal);border:2.5px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+.pin svg{transform:rotate(45deg)}
+.pin.faved{background:var(--coral)}
+.map-hint{font-size:12px;color:var(--light);margin-top:8px;text-align:center}
 
-/* ── DETAIL CONTENT ── */
-.dc{padding:18px 18px calc(var(--sb) + 44px)}
-.dbadge{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-.dname{font-size:27px;font-weight:700;letter-spacing:-.5px;line-height:1.15;margin-bottom:16px}
-.dcard{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:14px}
-.dr{padding:14px 16px;border-bottom:1px solid var(--border)}
-.dr:last-child{border-bottom:none}
-.dl{font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
-.dv{font-size:15px;color:var(--dark);line-height:1.55}
-.ff{background:var(--sand);border-radius:16px;padding:15px 15px 15px 14px;margin-bottom:14px;display:flex;gap:11px}
-.ffi{font-size:17px;flex-shrink:0;margin-top:1px}
-.fft{font-size:14px;color:var(--mid);line-height:1.55;font-style:italic}
-.ms{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:14px}
-.mh{padding:12px 16px;font-size:11px;font-weight:600;color:var(--pale);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border)}
-.ml{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);text-decoration:none;color:var(--dark);font-size:15px;font-weight:500;min-height:50px}
-.ml:last-child{border-bottom:none}
-.ma{color:var(--pale);font-size:18px;font-weight:300}
-.rbtn{display:block;background:var(--teal);color:#fff;text-align:center;padding:16px;border-radius:14px;font-size:17px;font-weight:600;text-decoration:none;margin-bottom:10px;letter-spacing:-.2px}
-.rbtn:active{background:var(--teal-d)}
-.pbtn{display:block;background:var(--card);color:var(--teal);text-align:center;padding:15px;border-radius:14px;font-size:16px;font-weight:500;text-decoration:none;border:1.5px solid var(--teal);margin-bottom:10px}
-.hn{font-size:13px;color:var(--pale);text-align:center;line-height:1.4;padding-top:2px}
-.ob{padding:0 0 calc(var(--sb) + 28px)}
+/* ---------- CARDS GRID ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;margin:16px 0 40px}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--border);display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;position:relative}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.card-img{height:175px;width:100%;object-fit:cover;cursor:pointer;background:linear-gradient(135deg,var(--turq),var(--navy))}
+.card-img-ph{height:175px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:linear-gradient(135deg,#1FB6C1,#0B3954);color:rgba(255,255,255,.92);font-family:'Fraunces',serif;font-size:26px;font-weight:600;text-align:center;padding:0 20px}
+.card-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card-top{display:flex;align-items:flex-start;gap:8px}
+.card-top h3{font-size:18.5px;color:var(--navy);line-height:1.2;cursor:pointer;flex:1}
+.rating{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
+.rating .star{color:var(--gold)}
+.rating .src{color:var(--light);font-weight:500;font-size:11px}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:600;border-radius:7px;padding:3px 8px;background:var(--sand);color:var(--mid);border:1px solid var(--sand-d)}
+.tag.setting-beachfront{background:#FFF3E9;color:#C2611E;border-color:#F5DEC9}
+.tag.setting-waterfront{background:#E7F6F7;color:var(--teal);border-color:#CDEBEC}
+.tag.setting-waterview{background:#EDF3FA;color:#3A6B9E;border-color:#D8E5F2}
+.tag.fine{background:#F6EFE2;color:#9A7B2E;border-color:#EBDFC4}
+.card-desc{font-size:13px;color:var(--mid);flex:1}
+.status-flag{font-size:11.5px;font-weight:600;color:#A05A1F;background:#FDF1E2;border:1px solid #F3DFC2;border-radius:8px;padding:5px 9px}
+.card-actions{display:flex;align-items:center;gap:8px;border-top:1px solid var(--border);padding-top:10px;margin-top:2px}
+.detail-link{font-size:13px;font-weight:700;color:var(--teal);margin-left:auto}
+.notes-toggle{font-size:12.5px;font-weight:600;color:var(--light)}
+.notes-toggle.has{color:var(--gold)}
 
-/* ── ITINERARY BANNER ── */
-.ib-btn{margin:16px 16px 4px;background:linear-gradient(135deg,#1A7A6E 0%,#0F5249 100%);border-radius:18px;padding:18px 18px 18px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .14s;text-decoration:none}
-.ib-btn:active{transform:scale(.975)}
-.ib-ico{font-size:30px;flex-shrink:0}
-.ib-txt h3{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-bottom:2px}
-.ib-txt p{font-size:13px;color:rgba(255,255,255,.72);line-height:1.4}
-.ib-arr{color:rgba(255,255,255,.6);font-size:20px;font-weight:300;margin-left:auto;flex-shrink:0}
+/* fav button */
+.favbtn{display:inline-flex;align-items:center;gap:6px;border-radius:99px;border:1.5px solid var(--border);padding:6px 12px;font-size:12.5px;font-weight:700;color:var(--mid);background:#fff;transition:.15s}
+.favbtn.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.favbtn svg{width:14px;height:14px;flex:none}
 
-/* ── RECOMMENDATIONS PAGE ── */
-.rh{background:linear-gradient(160deg,#1A7A6E 0%,#0F5249 100%);padding:calc(var(--st) + 22px) 20px 28px;color:#fff}
-.rh h1{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1.15}
-.rh .sub{font-size:14px;opacity:.75;margin-top:4px}
-.nights{padding:16px 16px calc(var(--sb) + 36px)}
-.nc{background:var(--card);border-radius:18px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)}
-.nd{background:var(--teal);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.nd-date{font-size:13px;font-weight:600;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px}
-.nd-night{font-size:15px;font-weight:700;color:#fff}
-.bday-badge{background:rgba(255,255,255,.22);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:#fff}
-.nb{padding:16px}
-.nr{font-size:20px;font-weight:700;color:var(--dark);letter-spacing:-.3px;margin-bottom:4px;cursor:pointer;display:flex;align-items:center;gap:6px}
-.nr-arr{color:var(--teal);font-size:16px}
-.ntags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.nwhy{font-size:14px;color:var(--mid);line-height:1.6}
-.nwhy strong{color:var(--dark);font-weight:600}
+/* notes */
+.notesbox{display:none;background:#FBF8F1;border:1px solid #EFE6CE;border-radius:12px;padding:10px;margin-top:4px}
+.notesbox.open{display:block}
+.notesbox textarea{width:100%;border:none;background:transparent;resize:vertical;min-height:54px;font-family:inherit;font-size:13px;color:var(--ink);outline:none}
+.notesbox .nb-foot{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;color:var(--light);margin-top:4px}
+.saved-flash{color:var(--teal);font-weight:700;opacity:0;transition:opacity .3s}
+.saved-flash.show{opacity:1}
+
+/* ---------- MODAL ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(11,42,58,.55);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;max-width:430px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.35);animation:pop .22s ease}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:none}}
+.modal .slides{position:relative;height:215px;background:linear-gradient(135deg,var(--turq),var(--navy));border-radius:20px 20px 0 0;overflow:hidden}
+.modal-body{padding:16px 18px 18px}
+.modal-body h3{font-size:21px;color:var(--navy);margin-bottom:6px}
+.modal-close{position:absolute;top:10px;right:10px;z-index:5;background:rgba(0,0,0,.45);color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-link{display:block;text-align:center;background:var(--navy);color:#fff;font-weight:700;font-size:14px;border-radius:12px;padding:12px;margin-top:12px}
+
+/* ---------- SLIDESHOW ---------- */
+.slides{position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity .45s ease}
+.slide.cur{opacity:1}
+.slide img{width:100%;height:100%;object-fit:cover}
+.slide-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1FB6C1,#0B3954);color:#fff;font-family:'Fraunces',serif;font-size:24px;padding:0 24px;text-align:center}
+.slide-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;background:rgba(0,0,0,.4);color:#fff;width:34px;height:34px;border-radius:50%;font-size:17px;display:flex;align-items:center;justify-content:center}
+.slide-nav.prev{left:10px}.slide-nav.next{right:10px}
+.dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:4}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);transition:.2s}
+.dot.cur{background:#fff;width:18px;border-radius:99px}
+
+/* ---------- DETAIL PAGE ---------- */
+.detail-hero{position:relative;height:340px;border-radius:0 0 26px 26px;overflow:hidden;background:var(--navy)}
+.back-btn{position:absolute;top:14px;left:14px;z-index:6;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);color:#fff;border-radius:99px;padding:8px 16px;font-size:13px;font-weight:700}
+.detail-wrap{max-width:860px;margin:0 auto;padding:0 16px 50px}
+.detail-card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow-sm);border:1px solid var(--border);padding:20px;margin-top:16px}
+.detail-title-row{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-top:18px}
+.detail-title-row h1{font-size:clamp(26px,4.5vw,38px);color:var(--navy);line-height:1.1;flex:1;min-width:200px}
+.detail-sub{color:var(--mid);font-size:14px;margin-top:4px}
+.detail-desc{font-size:15px;color:var(--ink)}
+.detail-desc p+p{margin-top:10px}
+.funfact{background:linear-gradient(135deg,#FDF6E5,#FBEFD6);border:1px solid #F0E2BC;border-radius:14px;padding:14px 16px;font-size:13.5px;color:#7A5E1E;margin-top:14px}
+.funfact b{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;color:var(--gold)}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.info-item{background:var(--sand);border-radius:12px;padding:11px 13px}
+.info-item .k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--light);margin-bottom:3px}
+.info-item .v{font-size:13.5px;font-weight:600;color:var(--ink);word-break:break-word}
+.menu-btns{display:flex;gap:8px;flex-wrap:wrap}
+.menu-btn{display:inline-flex;align-items:center;gap:7px;background:var(--sand);border:1px solid var(--sand-d);color:var(--ink);border-radius:11px;padding:9px 14px;font-size:13px;font-weight:600}
+.menu-btn:hover{background:var(--sand-d)}
+/* reservation */
+.res-card{background:linear-gradient(150deg,#0B3954,#11808C);color:#fff;border:none}
+.res-card h3{color:#fff}
+.res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.res-grid .fgroup label{color:rgba(255,255,255,.65)}
+.res-grid select,.res-grid input{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:9px 10px;font-size:14px;font-weight:600;font-family:inherit;width:100%;color-scheme:dark}
+.res-grid select option{color:#10303F}
+.book-btn{display:block;width:100%;text-align:center;background:var(--coral);color:#fff;font-weight:800;font-size:15px;border-radius:12px;padding:14px;transition:.15s}
+.book-btn:hover{background:var(--coral-d)}
+.res-note{font-size:11.5px;color:rgba(255,255,255,.75);margin-top:8px;text-align:center}
+h3.dc-h{font-size:17px;color:var(--navy);margin-bottom:10px}
+
+/* ---------- RECS & FAVS ---------- */
+.rec-card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow-sm);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.rec-head{background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;padding:13px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rec-head.bday{background:linear-gradient(135deg,#B8860B,#E3B23C)}
+.rec-head .night{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.85}
+.rec-head h3{font-size:18px}
+.rec-body{padding:16px 18px}
+.rec-body p{font-size:13.5px;color:var(--mid)}
+.rec-body .rec-link{font-weight:700;font-size:14px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--light)}
+.empty-state .big{font-size:42px;margin-bottom:10px}
+footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46px}
+@media(max-width:640px){
+  #map{height:330px}
+  .hero{min-height:280px}
+  .res-grid{grid-template-columns:1fr}
+  .detail-hero{height:260px}
+}
 </style>
 </head>
 <body>
-
-<!-- ══════════════ OVERVIEW ══════════════ -->
-<div id="ov" class="page active">
-  <div class="oh">
-    <h1>Bermuda<br>Dining Guide</h1>
-    <div class="sub">July 9 – 13, 2026</div>
-    <div class="hotel">📍 Rosewood Tucker's Point</div>
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand" onclick="go('home')">Bermuda <span>·</span> July 2026</div>
+    <div class="nav-links">
+      <button class="nav-btn" data-nav="home" onclick="go('home')">Restaurants</button>
+      <button class="nav-btn" data-nav="recs" onclick="go('recs')">Our Picks</button>
+      <button class="nav-btn" data-nav="favs" onclick="go('favs')">Favorites <span class="favcount" id="favCount" style="display:none">0</span></button>
+    </div>
   </div>
-  <div class="ob">
+</nav>
 
-    <div class="ib-btn" onclick="go('rx')">
-      <div class="ib-ico">🗓️</div>
-      <div class="ib-txt">
-        <h3>Recommended for Your Stay</h3>
-        <p>Night-by-night picks · July 9 – 12</p>
+<!-- ============ HOME ============ -->
+<div class="page" id="page-home">
+  <div class="hero">
+    <img class="hero-img" src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/reefsresort-ourresort-header-6543f0af2ae11.jpg" alt="Bermuda south shore beach">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Diane's 80th Birthday Trip · July 9–13, 2026</div>
+      <h1>Waterfront Dining<br>in Bermuda</h1>
+      <p>Every restaurant on the water — from white-linen beachfront dining rooms to toes-in-the-sand fish shacks. All distances measured from Rosewood Tucker's Point.</p>
+      <div class="hero-stats" id="heroStats"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="filterbar">
+      <div class="filter-row">
+        <div class="fgroup"><label>Region</label>
+          <select id="fRegion" onchange="applyFilters()">
+            <option value="">All regions</option>
+            <option>Tucker's Town &amp; Flatts</option>
+            <option>St George's &amp; St David's</option>
+            <option>Hamilton &amp; Central</option>
+            <option>South Shore</option>
+            <option>West End &amp; Dockyard</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>Cuisine</label>
+          <select id="fCuisine" onchange="applyFilters()"><option value="">All cuisines</option></select>
+        </div>
+        <div class="fgroup"><label>Rating</label>
+          <select id="fRating" onchange="applyFilters()">
+            <option value="">Any rating</option>
+            <option value="4">4.0 +</option>
+            <option value="4.3">4.3 +</option>
+            <option value="4.5">4.5 +</option>
+            <option value="4.7">4.7 +</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>Drive from Rosewood</label>
+          <select id="fDrive" onchange="applyFilters()">
+            <option value="">Any distance</option>
+            <option value="10">≤ 10 min</option>
+            <option value="20">≤ 20 min</option>
+            <option value="35">≤ 35 min</option>
+            <option value="50">≤ 50 min</option>
+          </select>
+        </div>
+        <button class="reset-btn" onclick="resetFilters()">Reset all</button>
       </div>
-      <div class="ib-arr">›</div>
-    </div>
-
-    <div class="sl"><h2>🌊 Beachfront Dining</h2><span class="ct">3 spots</span></div>
-
-    <div class="rc" onclick="go('co')">
-      <img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-header-1-658082162bf58.jpg" alt="Coconuts" loading="lazy">
-      <div class="cb">
-        <div class="ct-row"><span class="tag teal">Beachfront</span><span class="tag gray">Fine Dining</span><span class="dist">~35 min</span></div>
-        <div class="cn">Coconuts at The Reefs</div>
-        <div class="cd">Bermuda's most celebrated beachfront restaurant — white-linen dining perched between pink sand and dramatic cliffs, with the Atlantic stretching to the horizon.</div>
-      </div>
-    </div>
-
-    <div class="rc" onclick="go('pb')">
-      <img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd06ad71f2dbd00c7e_loren-bermuda-pink-beach-fish-dish.avif" alt="Pink Beach Club" loading="lazy">
-      <div class="cb">
-        <div class="ct-row"><span class="tag teal">Beachfront</span><span class="tag gray">Open Air</span><span class="dist">~5 min</span></div>
-        <div class="cn">The Pink Beach Club</div>
-        <div class="cd">Open-air dining with uninterrupted Atlantic views at The Loren. Mediterranean and Asian-inspired cuisine using locally sourced ingredients from Bermuda's waters and farms.</div>
-      </div>
-    </div>
-
-    <div class="rc" onclick="go('bc')">
-      <img src="https://picasso.rosewoodhotelgroup.com/transform/4f868101-0faa-498f-b03c-d3687c38c1e5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_BeachClub_FountainPool_6" alt="Rosewood Beach Club" loading="lazy">
-      <div class="cb">
-        <div class="ct-row"><span class="tag teal">Beachfront</span><span class="tag amber">Guests Only</span><span class="dist">On-property</span></div>
-        <div class="cn">Rosewood Beach Club</div>
-        <div class="cd">Fresh seafood, sushi, and seasonal BBQ on Bermuda's largest private beach — relaxed yet elegant, exclusive to Rosewood guests.</div>
-      </div>
-    </div>
-
-    <div class="sdiv"></div>
-    <div class="sl"><h2>🕯️ Other Great Restaurants</h2><span class="ct">3 spots</span></div>
-
-    <div class="rc" onclick="go('ib')">
-      <img src="https://picasso.rosewoodhotelgroup.com/transform/494e02e2-be63-4b12-943c-6de61e5c29a5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_4" alt="Island Brasserie" loading="lazy">
-      <div class="cb">
-        <div class="ct-row"><span class="tag teal">Steakhouse</span><span class="tag gray">Seafood</span><span class="dist">On-property</span></div>
-        <div class="cn">Island Brasserie</div>
-        <div class="cd">Rosewood's signature restaurant — prime cuts, fresh seafood, and tableside carving in a colonial-warm setting adorned with rare original Pan Am murals.</div>
-      </div>
-    </div>
-
-    <div class="rc" onclick="go('bg')">
-      <img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120468-968K8Y941HTRPGTR4ILH/bg1.jpg" alt="Barracuda Grill" loading="lazy">
-      <div class="cb">
-        <div class="ct-row"><span class="tag teal">Fine Dining</span><span class="tag gray">DiRoNA Award</span><span class="dist">~30 min</span></div>
-        <div class="cn">Barracuda Grill</div>
-        <div class="cd">Bermuda's most acclaimed fine dining institution for nearly 20 years — outstanding seafood and chops with impeccable service and a celebrated cocktail bar.</div>
-      </div>
-    </div>
-
-    <div class="rc" onclick="go('ip')">
-      <img src="https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-intrepid-1100x550.jpg" alt="Intrepid" loading="lazy">
-      <div class="cb">
-        <div class="ct-row"><span class="tag teal">Raw Bar</span><span class="tag gray">Art Deco</span><span class="dist">~30 min</span></div>
-        <div class="cn">Intrepid</div>
-        <div class="cd">Steak, seafood & raw bar with panoramic Hamilton Harbour views. Art Deco interior, premier oyster program, and prime cuts dry-aged by New Jersey's finest purveyors.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════ COCONUTS ══════════════ -->
-<div id="co" class="page">
-  <div class="dn">
-    <button class="bb" onclick="go('ov')">
-      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Dining Guide
-    </button>
-    <span class="nt">Beachfront · Southampton</span>
-  </div>
-  <div class="gw" id="gw-co">
-    <div class="gt" id="gt-co">
-      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-header-1-658082162bf58.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-coconutsthereefsbermuda-beachfrontromance-65ae8196b59ad.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-beachbbq-65b2869404acb.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://symphony.cdn.tambourine.com/the-reefs-redesign/media/reefsresort-ourresort-header-6543f0af2ae11.jpg" alt="" loading="lazy"></div>
-    </div>
-    <div class="gd" id="gd-co"></div>
-  </div>
-  <div class="dc">
-    <div class="dbadge"><span class="tag teal">🌊 Beachfront</span></div>
-    <div class="dname">Coconuts at The Reefs</div>
-    <div class="dcard">
-      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">White-linen dining perched between pink sand and dramatic cliffs, with the Atlantic stretching to the horizon. One of Bermuda's most romantic settings — magical at sunset. Tables directly on the beach or on an elevated terrace.</div></div>
-      <div class="dr"><div class="dl">Distance</div><div class="dv">~35 minutes · South Shore, Southampton Parish</div></div>
-      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Caribbean-inspired fine dining — fresh-caught local fish, prime cuts, conch duo, octopus, lobster rolls, and the signature Bermuda fish chowder with sherry pepper and black rum</div></div>
-      <div class="dr"><div class="dl">Hours</div><div class="dv">Lunch 12–5pm · Dinner 6–10pm daily</div></div>
-    </div>
-    <div class="ff"><span class="ffi">★</span><span class="fft">One of the very few restaurants in Bermuda actually situated on the beach itself — set between the sand and the cliffs, not merely near the water.</span></div>
-    <div class="ms">
-      <div class="mh">Menus</div>
-      <a class="ml" href="https://www.thereefs.com/beachfront-bermuda-restaurants/coconuts-the-reefs-bermuda" target="_blank"><span>🌐 Full Menu (Website)</span><span class="ma">›</span></a>
-    </div>
-    <a class="rbtn" href="https://www.opentable.com/restref/client/?rid=1294549&restref=1294549" target="_blank">Reserve on OpenTable</a>
-    <a class="pbtn" href="tel:4412380222">Call 441-238-0222</a>
-    <div class="hn">Reservations strongly recommended</div>
-  </div>
-</div>
-
-<!-- ══════════════ PINK BEACH CLUB ══════════════ -->
-<div id="pb" class="page">
-  <div class="dn">
-    <button class="bb" onclick="go('ov')">
-      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Dining Guide
-    </button>
-    <span class="nt">Beachfront · Tucker's Town</span>
-  </div>
-  <div class="gw" id="gw-pb">
-    <div class="gt" id="gt-pb">
-      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd9bf6d4ddc4ab7371_loren-bermuda-pink-beach-man-pouring-champagne.avif" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd06ad71f2dbd00c7e_loren-bermuda-pink-beach-fish-dish.avif" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd031aa00075831c8b_loren-bermuda-pink-beach-food-on-table.avif" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cda55d11ef9f98da75_loren-bermuda-pink-beach-veggie-bowl.avif" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cf8da87495a7a40286_loren-bermuda-drink-pour-at-table.avif" alt="" loading="lazy"></div>
-    </div>
-    <div class="gd" id="gd-pb"></div>
-  </div>
-  <div class="dc">
-    <div class="dbadge"><span class="tag teal">🌊 Beachfront</span></div>
-    <div class="dname">The Pink Beach Club at The Loren</div>
-    <div class="dcard">
-      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Open-air and relaxed-elegant, with uninterrupted Atlantic Ocean views from every table. Transitions effortlessly from sunset cocktails into dinner under the stars on a wooden deck hovering above the ocean's edge.</div></div>
-      <div class="dr"><div class="dl">Distance</div><div class="dv">~5 minutes · Tucker's Town (same parish as the Rosewood)</div></div>
-      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Mediterranean and Asian-inspired — sushi, crab cakes, fresh ahi tuna, grilled lamb rack, chimichurri hanger steak; locally sourced ingredients from Bermuda's waters and farms</div></div>
-      <div class="dr"><div class="dl">Hours</div><div class="dv">Breakfast 7–11am · Lunch 11am–5pm · Dinner 5–10pm · Sunday Brunch 11am–3pm</div></div>
-    </div>
-    <div class="ff"><span class="ffi">★</span><span class="fft">The Loren sits on one of Bermuda's famous pink sand beaches — the blush color comes from crushed coral and red foraminifera shells mixed into the sand.</span></div>
-    <div class="ms">
-      <div class="mh">Menus · Spring 2026</div>
-      <a class="ml" href="https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/69e0db6bbe3f74f5853e036e_03TheLoren-Bermuda-Menu-2026-Spring-Dinner.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/69e0db84d261115ad07d8256_02TheLoren-Bermuda-Menu-2026-Spring-Lunch.pdf" target="_blank"><span>☀️ Lunch Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/6977bc76eb257377575071ea_TheLoren-Bermuda-Menu-%202025-%20Fall-DrinksWineSpirits.pdf" target="_blank"><span>🍷 Wine & Cocktails</span><span class="ma">›</span></a>
-    </div>
-    <a class="rbtn" href="https://www.opentable.com/r/the-pink-beach-club-tuckers-town" target="_blank">Reserve on OpenTable</a>
-    <a class="pbtn" href="tel:4412931666">Call 441-293-1666</a>
-  </div>
-</div>
-
-<!-- ══════════════ ROSEWOOD BEACH CLUB ══════════════ -->
-<div id="bc" class="page">
-  <div class="dn">
-    <button class="bb" onclick="go('ov')">
-      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Dining Guide
-    </button>
-    <span class="nt">On-property · Guests Only</span>
-  </div>
-  <div class="gw" id="gw-bc">
-    <div class="gt" id="gt-bc">
-      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/4f868101-0faa-498f-b03c-d3687c38c1e5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_BeachClub_FountainPool_6" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/68fff49e-2fb1-438c-b137-79867e297375/RWTKP_3-0_Brand-com_Assets_Facilities_Exteriors_Aerial_BeachClub_5" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/968e23bf-df0c-4f8d-bdfe-f04de1df0c9b/RWTKP_3-0_Brand-com_Assets_Facilities_Exteriors_Aerial_BeachClub_2" alt="" loading="lazy"></div>
-    </div>
-    <div class="gd" id="gd-bc"></div>
-  </div>
-  <div class="dc">
-    <div class="dbadge"><span class="tag teal">🌊 Beachfront</span><span class="tag amber">Guests Only</span></div>
-    <div class="dname">Rosewood Beach Club</div>
-    <div class="dcard">
-      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Relaxed yet polished — arching fountains, strung lights, and Bermuda's largest private beach as your backdrop. The easiest evening of the trip: no car, no reservations, just walk down to the water.</div></div>
-      <div class="dr"><div class="dl">Distance</div><div class="dv">On-property at Rosewood Tucker's Point</div></div>
-      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Fresh seafood, sushi by Oishii, and seasonal BBQ. Marketplace-style selection of local and imported seafood paired with refreshing cocktails and a curated wine list</div></div>
-      <div class="dr"><div class="dl">Hours</div><div class="dv">Lunch 11:30am–5pm · Dinner 5–9pm · Bar from 11am daily</div></div>
-    </div>
-    <div class="ms">
-      <div class="mh">Menus</div>
-      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/Beach%20Club%20Dinner%20Menu_26%20March.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/Beach%20Club%20Lunch%20Menu_12th%20March.pdf" target="_blank"><span>☀️ Lunch Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/BC_Beach%20and%20Pool%20Menu.pdf" target="_blank"><span>🏖️ Beach & Pool Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/beach_club_cocktails.pdf" target="_blank"><span>🍹 Cocktails</span><span class="ma">›</span></a>
-    </div>
-    <a class="rbtn" href="mailto:rwtpc.fbres@rosewoodhotels.com">Inquire via Email</a>
-    <a class="pbtn" href="tel:14412986990">Call +1 441-298-6990</a>
-    <div class="hn">Contact the Rosewood concierge to arrange</div>
-  </div>
-</div>
-
-<!-- ══════════════ ISLAND BRASSERIE ══════════════ -->
-<div id="ib" class="page">
-  <div class="dn">
-    <button class="bb" onclick="go('ov')">
-      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Dining Guide
-    </button>
-    <span class="nt">On-property · Rosewood</span>
-  </div>
-  <div class="gw" id="gw-ib">
-    <div class="gt" id="gt-ib">
-      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/494e02e2-be63-4b12-943c-6de61e5c29a5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_4" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/25657051-9717-46bc-9641-d4aa5a5fa2b7/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_3" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/5c65ecd1-edef-4a44-942c-861b3802160c/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_1" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://picasso.rosewoodhotelgroup.com/transform/d2f54c32-8911-425c-8be6-b49c1c91e47f/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_SkyClubMuralDetail_1" alt="" loading="lazy"></div>
-    </div>
-    <div class="gd" id="gd-ib"></div>
-  </div>
-  <div class="dc">
-    <div class="dbadge"><span class="tag gray">🕯️ On-property</span></div>
-    <div class="dname">Island Brasserie</div>
-    <div class="dcard">
-      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Colonial warmth and intimate sophistication — cathedral ceilings with exposed cedar beams, candlelight, and one-of-a-kind historic murals. Formal without being stiff; terrace offers views of Harrington Sound.</div></div>
-      <div class="dr"><div class="dl">Distance</div><div class="dv">On-property at Rosewood Tucker's Point</div></div>
-      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Modern steakhouse — prime cuts including Chateaubriand and Tomahawk for two, carved tableside. Fresh local seafood alongside global cuts. Smart Casual dress code.</div></div>
-      <div class="dr"><div class="dl">Hours</div><div class="dv">Breakfast 7–11am · Lunch 11am–5:30pm · Dinner 5:30–9pm daily</div></div>
-    </div>
-    <div class="ff"><span class="ffi">★</span><span class="fft">The dining room features original murals commissioned by Pan American Airways founder Juan Trippe for the legendary Sky Club at New York's Pan Am Building — depicting ports of call from the golden age of travel.</span></div>
-    <div class="ms">
-      <div class="mh">Menus · 2026</div>
-      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/IB%20DINNER%20Jan%202026.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/IslandBrasserie_Wine%20List.pdf" target="_blank"><span>🍷 Wine List</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/IB%20COCKTAIL%20LIST%202026.pdf" target="_blank"><span>🍸 Cocktail List</span><span class="ma">›</span></a>
-    </div>
-    <a class="rbtn" href="https://www.sevenrooms.com/explore/islandbrasserierwber/reservations/create/search/" target="_blank">Make a Reservation</a>
-    <a class="pbtn" href="tel:14412984071">Call +1 441-298-4071</a>
-  </div>
-</div>
-
-<!-- ══════════════ BARRACUDA GRILL ══════════════ -->
-<div id="bg" class="page">
-  <div class="dn">
-    <button class="bb" onclick="go('ov')">
-      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Dining Guide
-    </button>
-    <span class="nt">Hamilton · ~30 min</span>
-  </div>
-  <div class="gw" id="gw-bg">
-    <div class="gt" id="gt-bg">
-      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120468-968K8Y941HTRPGTR4ILH/bg1.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120374-26ZFZT6FWOSWS45MH6I3/bg2.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070121736-F83UABMGB0T8UD9SVAUM/bg3.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070123165-P56C51KD0FW82X0Y8129/bg4.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070363759-6PJTS777VXZQG8TM01II/bg5.jpg" alt="" loading="lazy"></div>
-    </div>
-    <div class="gd" id="gd-bg"></div>
-  </div>
-  <div class="dc">
-    <div class="dbadge"><span class="tag gray">🕯️ Hamilton</span></div>
-    <div class="dname">Barracuda Grill</div>
-    <div class="dcard">
-      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Elegant and polished with warm lighting and an intimate feel — refined without pretension. Bermuda's most enduring fine dining institution. The bar, a multiple Best of Bermuda award winner, is worth arriving early for.</div></div>
-      <div class="dr"><div class="dl">Distance</div><div class="dv">~30 minutes · 5 Burnaby Hill, Hamilton</div></div>
-      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Contemporary seafood and chops — locally sourced fresh fish, shellfish, and prime beef. Seasonal menu changes with market availability; excellent wine list and cocktail program.</div></div>
-      <div class="dr"><div class="dl">Hours</div><div class="dv">Lunch Mon–Fri 12–2:30pm · Dinner daily 5:30–10pm · Bar until 11pm</div></div>
-    </div>
-    <div class="ff"><span class="ffi">★</span><span class="fft">Barracuda Grill holds the DiRoNA award (Distinguished Restaurants of North America) — one of the most prestigious fine dining honors in the hemisphere, held by only a handful of Bermuda restaurants.</span></div>
-    <div class="ms">
-      <div class="mh">Menus</div>
-      <a class="ml" href="https://www.irg.bm/s/Barracuda-Dinner-SEPT-2025-FINAL-for-Print-V113.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.irg.bm/s/Barracuda-Lunch-SEPT-2025-FINAL-for-Print-V113.pdf" target="_blank"><span>☀️ Lunch Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.irg.bm/s/BG-Cocktails-Dinner-April-26.pdf" target="_blank"><span>🍸 Cocktail List</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.irg.bm/s/BG-Wine-List-May-26.pdf" target="_blank"><span>🍷 Wine List</span><span class="ma">›</span></a>
-    </div>
-    <a class="rbtn" href="https://www.opentable.com/r/barracuda-grill-hamilton" target="_blank">Reserve on OpenTable</a>
-    <a class="pbtn" href="tel:4412921609">Call 441-292-1609</a>
-    <div class="hn">Reservations strongly recommended</div>
-  </div>
-</div>
-
-<!-- ══════════════ INTREPID ══════════════ -->
-<div id="ip" class="page">
-  <div class="dn">
-    <button class="bb" onclick="go('ov')">
-      <svg viewBox="0 0 10 16" fill="none"><path d="M8.5 1L1.5 8L8.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Dining Guide
-    </button>
-    <span class="nt">Hamilton Princess · ~30 min</span>
-  </div>
-  <div class="gw" id="gw-ip">
-    <div class="gt" id="gt-ip">
-      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-intrepid-1100x550.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2024/01/intrepid-restaurant-top-banner-Jan24-02-1600x555.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-steak-07-1600x555.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2025/03/BannerContent_Hamilton-Princess-food-1100x550.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-cocktail06-1600x555.jpg" alt="" loading="lazy"></div>
-      <div class="gs"><img src="https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-entrance-04-1600x555.jpg" alt="" loading="lazy"></div>
-    </div>
-    <div class="gd" id="gd-ip"></div>
-  </div>
-  <div class="dc">
-    <div class="dbadge"><span class="tag gray">🕯️ Hamilton</span></div>
-    <div class="dname">Intrepid</div>
-    <div class="dcard">
-      <div class="dr"><div class="dl">Atmosphere</div><div class="dv">Art Deco-inspired interior with panoramic Hamilton Harbour views — sophisticated and lively, anchored by a stunning raw bar. The restaurant grows its own herbs in raised beds just outside, overlooking the harbour.</div></div>
-      <div class="dr"><div class="dl">Distance</div><div class="dv">~30 minutes · Hamilton Princess, 76 Pitts Bay Road</div></div>
-      <div class="dr"><div class="dl">Cuisine</div><div class="dv">Steak, seafood & raw bar — oysters, caviar, temaki sushi station, prime cuts dry-aged by Niman Ranch and Debragga & Spitler. Highlights: Lump Crab Cake, Oysters Rockefeller, Intrepid Maki Roll with lobster.</div></div>
-      <div class="dr"><div class="dl">Hours</div><div class="dv">Dinner Mon–Sat 6–10pm · Cocktails from 5pm · Closed Sundays</div></div>
-    </div>
-    <div class="ff"><span class="ffi">★</span><span class="fft">Named after William Stephenson, a WWII British intelligence agent who ran his spy network from this very hotel under the codename "Intrepid" — widely believed to be one of the real-life inspirations for James Bond. The restaurant features a commanding KAWS original artwork above the private dining room.</span></div>
-    <div class="ms">
-      <div class="mh">Menus</div>
-      <a class="ml" href="https://www.thehamiltonprincess.com/wp-content/uploads/2025/11/PRIN_Intrepid_Menu_5Nov25.pdf" target="_blank"><span>🌙 Dinner Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.thehamiltonprincess.com/wp-content/uploads/2025/11/PRIN_Intrepid_DESSERT_Menu_05Nov25.pdf" target="_blank"><span>🍮 Dessert Menu</span><span class="ma">›</span></a>
-      <a class="ml" href="https://www.thehamiltonprincess.com/wp-content/uploads/2026/03/Intrepid-Cocktail-Menu-23Mar26.pdf" target="_blank"><span>🍸 Cocktail Menu</span><span class="ma">›</span></a>
-    </div>
-    <a class="rbtn" href="https://www.opentable.com/r/intrepid-hamilton-princess-and-beach-club-hamilton" target="_blank">Reserve on OpenTable</a>
-    <a class="pbtn" href="tel:14412982028">Call +1 441-298-2028</a>
-    <div class="hn">Advance reservations strongly encouraged · Closed Sundays</div>
-  </div>
-</div>
-
-<!-- ══════════════ RECOMMENDATIONS ══════════════ -->
-<div id="rx" class="page">
-  <div class="dn">
-    <button class="bb" onclick="go('ov')"><svg viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9,1 2,8 9,15"/></svg>&nbsp;Guide</button>
-    <span class="nt">July 2026</span>
-  </div>
-  <div class="rh">
-    <h1>Recommended<br>for Your Stay</h1>
-    <div class="sub">Night-by-night picks · Rosewood Tucker's Point</div>
-  </div>
-  <div class="nights">
-
-    <!-- Night 1 -->
-    <div class="nc">
-      <div class="nd">
-        <div>
-          <div class="nd-date">Thursday · July 9</div>
-          <div class="nd-night">Night 1 · Arrival Evening</div>
+      <div class="filter-row">
+        <div class="fgroup"><label>Setting</label>
+          <div class="chips" id="fSetting">
+            <button class="chip" data-v="beachfront" onclick="toggleChip(this)">🏖 Beachfront</button>
+            <button class="chip" data-v="waterfront" onclick="toggleChip(this)">⚓ Waterfront</button>
+            <button class="chip" data-v="waterview" onclick="toggleChip(this)">🌊 Water view</button>
+          </div>
+        </div>
+        <div class="fgroup"><label>Style</label>
+          <div class="chips">
+            <button class="chip" id="fFine" onclick="toggleChip(this)">✦ Fine dining</button>
+          </div>
+        </div>
+        <div class="fgroup"><label>Best for</label>
+          <div class="chips" id="fMeal">
+            <button class="chip" data-v="lunch" onclick="toggleChip(this)">☀️ Lunch spot</button>
+            <button class="chip" data-v="dinner" onclick="toggleChip(this)">🌙 Dinner spot</button>
+          </div>
+        </div>
+        <div class="fgroup"><label>Mine</label>
+          <div class="chips">
+            <button class="chip fav-chip" id="fFavs" onclick="toggleChip(this)">♥ Favorites only</button>
+          </div>
         </div>
       </div>
-      <div class="nb">
-        <div class="nr" onclick="go('pb')">The Pink Beach Club <span class="nr-arr">›</span></div>
-        <div class="ntags"><span class="tag teal">Beachfront</span><span class="tag gray">~5 min</span><span class="tag gray">Open Air</span></div>
-        <div class="nwhy">After a travel day, the last thing you want is a long drive or complicated logistics. The Pink Beach Club is <strong>five minutes from the Rosewood</strong>, which means you can settle in, freshen up, and be at the table watching the sun go down over the Atlantic without any stress. The open-air setting is immediately transporting — it announces that you're really here — and the kitchen turns out some of the best fresh seafood on the island, with enough variety on the menu that everyone will find something to love.</div>
-      </div>
+      <div class="result-count" id="resultCount"></div>
     </div>
 
-    <!-- Night 2 -->
-    <div class="nc">
-      <div class="nd">
-        <div>
-          <div class="nd-date">Friday · July 10</div>
-          <div class="nd-night">Night 2 · Night on the Town</div>
-        </div>
-      </div>
-      <div class="nb">
-        <div class="nr" onclick="go('bg')">Barracuda Grill <span class="nr-arr">›</span></div>
-        <div class="ntags"><span class="tag teal">Fine Dining</span><span class="tag gray">~30 min</span><span class="tag gray">DiRoNA Award</span></div>
-        <div class="nwhy">Barracuda Grill is the restaurant Bermudans themselves reserve for their most important occasions, and it shows. The kitchen has held the DiRoNA award — one of the hemisphere's most prestigious dining honors — for years, and the menu balances <strong>exceptional fresh seafood</strong> with prime chops, so the table is fully covered. Going tonight gives you a proper night out in Hamilton, Bermuda's capital, before the birthday festivities the following evening. Book the early seating so you can take your time.</div>
-      </div>
-    </div>
+    <div id="map"></div>
+    <div class="map-hint">Tap a pin for a preview · <span style="color:var(--coral);font-weight:700">coral pins</span> are your favorites</div>
 
-    <!-- Night 3 — Birthday -->
-    <div class="nc">
-      <div class="nd" style="background:linear-gradient(90deg,#C8963E,#A87130)">
-        <div>
-          <div class="nd-date">Saturday · July 11</div>
-          <div class="nd-night">Night 3 · Diane's 80th Birthday</div>
-        </div>
-        <span class="bday-badge">🎂 80th</span>
-      </div>
-      <div class="nb">
-        <div class="nr" onclick="go('co')">Coconuts at The Reefs <span class="nr-arr">›</span></div>
-        <div class="ntags"><span class="tag teal">Beachfront</span><span class="tag gray">~35 min</span><span class="tag gray">Fine Dining</span></div>
-        <div class="nwhy">This is the one. Coconuts is Bermuda's most celebrated beach dinner — <strong>white-linen tables set between pink sand and dramatic cliffs</strong>, with the Atlantic stretching to the horizon in every direction. Very few restaurants in Bermuda are actually situated on the beach itself rather than just near the water, and the setting at sunset is genuinely extraordinary. The drive is worth every minute. Call ahead to mention the birthday — the team there is known for making special occasions feel exactly that way.</div>
-      </div>
-    </div>
-
-    <!-- Night 4 -->
-    <div class="nc">
-      <div class="nd">
-        <div>
-          <div class="nd-date">Sunday · July 12</div>
-          <div class="nd-night">Night 4 · Final Evening</div>
-        </div>
-      </div>
-      <div class="nb">
-        <div class="nr" onclick="go('ib')">Island Brasserie <span class="nr-arr">›</span></div>
-        <div class="ntags"><span class="tag teal">Steakhouse</span><span class="tag gray">On-property</span><span class="tag gray">Seafood</span></div>
-        <div class="nwhy">For the last evening, there's something to be said for not going anywhere at all. Island Brasserie is Rosewood's signature restaurant — <strong>prime cuts, fresh seafood, and tableside carving</strong> in a warm, candlelit setting hung with original murals from Pan American Airways' legendary Sky Club. It's elegant without being a production, and staying on-property means the night ends at your own pace, with a short walk back whenever you're ready. A fitting close to the trip.</div>
-      </div>
-    </div>
-
+    <div class="section-head"><h2>The Restaurants</h2><div class="sub">tap a card for full details, menus &amp; reservations</div></div>
+    <div class="grid" id="cardGrid"></div>
   </div>
 </div>
 
+<!-- ============ RECOMMENDATIONS ============ -->
+<div class="page" id="page-recs">
+  <div class="wrap" style="padding-top:26px">
+    <div class="section-head"><h2>Recommended for Your Stay</h2><div class="sub">night-by-night picks · July 9–13</div></div>
+    <div id="recList"></div>
+  </div>
+</div>
+
+<!-- ============ FAVORITES ============ -->
+<div class="page" id="page-favs">
+  <div class="wrap" style="padding-top:26px">
+    <div class="section-head"><h2>Your Favorites</h2><div class="sub">saved on this device — with your notes</div></div>
+    <div class="grid" id="favGrid"></div>
+    <div class="empty-state" id="favEmpty" style="display:none">
+      <div class="big">🌺</div>
+      <p>No favorites yet.<br>Tap the ♥ on any restaurant to save it here.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DETAIL ============ -->
+<div class="page" id="page-detail"><div id="detailContent"></div></div>
+
+<!-- ============ MAP MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<footer>Made with love for Megan &amp; Diane · Rosewood Tucker's Point · July 9–13, 2026<br>Ratings from Google, TripAdvisor or OpenTable as noted. Confirm seasonal venues by phone.</footer>
 <script>
-// ── Routing ──────────────────────────────────────────
-function go(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+/* ================= DATA ================= */
+const R = [
+{id:"brasserie",name:"Island Brasserie",area:"Rosewood Tucker's Point · on property",region:"Tucker's Town & Flatts",lat:32.3416,lng:-64.6907,setting:"waterfront",drive:0,fine:true,cuisine:"Steakhouse",meal:"dinner",price:"$$$$",rating:4.6,reviews:161,src:"TripAdvisor",
+short:"Rosewood's signature restaurant — cathedral cedar ceilings, Pan Am Sky Club murals and a terrace over Harrington Sound.",
+desc:"Island Brasserie is the signature restaurant of your home resort, set beneath cathedral ceilings with cedar beams and lit by candlelight, with the original Pan Am Sky Club murals wrapping the room. The terrace looks across Harrington Sound — no taxi, no logistics, just a short stroll from your room. The kitchen is a modern steakhouse at heart: Chateaubriand, a Tomahawk for two carved tableside, and fresh local seafood for Megan. Smart casual dress. It is the easiest elegant dinner of the trip and an ideal final-night choice.",
+fun:"The murals were commissioned by Pan Am founder Juan Trippe for the legendary Sky Club atop New York's Pan Am Building.",status:"",
+imgs:["https://picasso.rosewoodhotelgroup.com/transform/494e02e2-be63-4b12-943c-6de61e5c29a5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_4","https://picasso.rosewoodhotelgroup.com/transform/25657051-9717-46bc-9641-d4aa5a5fa2b7/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_3","https://picasso.rosewoodhotelgroup.com/transform/5c65ecd1-edef-4a44-942c-861b3802160c/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_DiningRoom_1","https://picasso.rosewoodhotelgroup.com/transform/d2f54c32-8911-425c-8be6-b49c1c91e47f/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_IslandBrasserie_SkyClubMuralDetail_1"],
+menus:[{l:"Dinner",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/IB%20DINNER%20Jan%202026.pdf"},{l:"Wine",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/IslandBrasserie_Wine%20List.pdf"},{l:"Cocktails",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/IB%20COCKTAIL%20LIST%202026.pdf"}],
+phone:"+1 441-298-4071",email:"rwtkp.fbres@rosewoodhotels.com",web:"https://www.rosewoodhotels.com/en/bermuda/dining",resP:"sevenrooms",resU:"https://www.sevenrooms.com/explore/islandbrasserierwber/reservations/create/search/",hours:"Breakfast 7–11am · Lunch 11am–5:30pm · Dinner 5:30–9pm daily"},
+
+{id:"beachclub",name:"Rosewood Beach Club",area:"Rosewood Tucker's Point · on property",region:"Tucker's Town & Flatts",lat:32.3350,lng:-64.6850,setting:"beachfront",drive:5,fine:true,cuisine:"Seafood",meal:"lunch",price:"$$$$",rating:null,reviews:null,src:"",
+short:"Lunch, sushi and cocktails directly on Bermuda's largest private pink-sand beach — guests only, no logistics needed.",
+desc:"The Beach Club is your resort's relaxed-yet-polished beachfront restaurant — arching fountains, strung lights and Bermuda's largest private pink-sand beach a few steps from your table. The marketplace-style menu majors in fresh seafood and sushi by Oishii, plus a seasonal BBQ, cocktails and a curated wine list. Access is exclusive to Rosewood guests and members, which means it's effectively a private beachfront dining room for your group. Perfect for a long birthday-week lunch between swims; ask the concierge to set up an evening table during dinner service.",
+fun:"The beach here is the largest private beach in Bermuda — its blush color comes from crushed coral and red foraminifera shells.",status:"Rosewood guests & members only — book via concierge",
+imgs:["https://picasso.rosewoodhotelgroup.com/transform/4f868101-0faa-498f-b03c-d3687c38c1e5/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_BeachClub_FountainPool_6","https://picasso.rosewoodhotelgroup.com/transform/68fff49e-2fb1-438c-b137-79867e297375/RWTKP_3-0_Brand-com_Assets_Facilities_Exteriors_Aerial_BeachClub_5","https://picasso.rosewoodhotelgroup.com/transform/968e23bf-df0c-4f8d-bdfe-f04de1df0c9b/RWTKP_3-0_Brand-com_Assets_Facilities_Exteriors_Aerial_BeachClub_2"],
+menus:[{l:"Dinner",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/Beach%20Club%20Dinner%20Menu_26%20March.pdf"},{l:"Lunch",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/Beach%20Club%20Lunch%20Menu_12th%20March.pdf"},{l:"Beach & Pool",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/BC_Beach%20and%20Pool%20Menu.pdf"},{l:"Cocktails",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/beach_club_cocktails.pdf"}],
+phone:"+1 441-298-6990",email:"rwtpc.fbres@rosewoodhotels.com",web:"https://www.rosewoodhotels.com/en/bermuda/dining",resP:"phone",resU:"",hours:"Lunch 11:30am–5pm · Dinner 5–9pm · Bar from 11am daily (seasonal)"},
+
+{id:"sulverde",name:"Sul Verde",area:"Tucker's Point Golf Clubhouse · Rosewood",region:"Tucker's Town & Flatts",lat:32.3435,lng:-64.6975,setting:"waterview",drive:5,fine:true,cuisine:"Italian",meal:"both",price:"$$$",rating:4.4,reviews:157,src:"TripAdvisor",
+short:"Southern-Italian trattoria on the golf clubhouse terrace — award-winning wood-fired pizza with distant Castle Harbour views.",
+desc:"Sul Verde brings the warmth of Southern Italy to the Tucker's Point Golf Clubhouse, with an expansive al fresco terrace overlooking rolling greens and the turquoise sweep of Castle Harbour in the distance. Head chef Maximo Villagra celebrates the simple, authentic flavors of Campania: handcrafted pastas, freshly baked bread, house-made sausages and the resort's award-winning Verace-crust wood-fired pizzas. Signatures include penne with Montepulciano-braised meatballs and pillowy gnocchi with shrimp and spinach. An antipasto bar and kids' menu make it one of the easiest multi-generational dinners on the east end — five minutes from your room.",
+fun:"Sul Verde's Verace-crust pizzas are made in the Neapolitan vera pizza tradition — unusual bragging rights for a golf clubhouse.",status:"",
+imgs:["https://picasso.rosewoodhotelgroup.com/transform/ab3b4b5a-caa4-491d-9240-2f971b3fe27b/RWTKP_3-0_Brand-com_Assets_FB_Restaurant_SulVerde_DiningRoom_1","https://picasso.rosewoodhotelgroup.com/transform/d690e6e0-3ed0-4ad1-83be-4686dd9db78a/RWBER_3-0_Brand-com_Assets_FB_Restaurant_SulVerde_FamilyStyle_1","https://picasso.rosewoodhotelgroup.com/transform/2a36798b-39d7-473e-b7bc-468a36e35a23/RWTKP_3-0_Brand-com_Assets_FB_Bar_SulVerde_3","https://picasso.rosewoodhotelgroup.com/transform/45a0ae65-9a61-4cc5-985e-df540f6b257f/RWBER_FB_Sul-Verde_Antipasto-Bar"],
+menus:[{l:"Lunch / Dinner",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/3-0-dining-menus/Sul%20Verde%20Menu%20_%2010th%20Nov%202025_Font%202_V3.pdf"},{l:"Wine",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/sul_verde_wine_list.pdf"},{l:"Dessert",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/SulVerde_DessertMenu.pdf"},{l:"Kids",u:"https://www.rosewoodhotels.com/content/dam/rosewoodhotels/property/bermuda/en/documents/dining/Kids%20Menu%20All%20Outlets.pdf"}],
+phone:"+1 441-298-6983",email:"rwtkp.fbres@rosewoodhotels.com",web:"https://www.rosewoodhotels.com/en/bermuda/dining/sul-verde",resP:"sevenrooms",resU:"https://www.sevenrooms.com/explore/sulverde/reservations/create/search/",hours:"Lunch 11am–5pm · Dinner 5–9pm daily"},
+
+{id:"pinkbeach",name:"The Pink Beach Club",area:"The Loren at Pink Beach · Tucker's Town",region:"Tucker's Town & Flatts",lat:32.3160,lng:-64.7150,setting:"beachfront",drive:5,fine:true,cuisine:"Island contemporary",meal:"both",price:"$$$$",rating:4.5,reviews:555,src:"OpenTable",
+short:"Open-air dining perched directly over The Loren's pink-sand beach — uninterrupted Atlantic views, 5 minutes from Rosewood.",
+desc:"The Pink Beach Club sits on a wooden deck above the ocean's edge at The Loren, Bermuda's most design-forward boutique hotel — just five minutes from Rosewood. Open-air with uninterrupted Atlantic views, it transitions effortlessly from sunset cocktails to dinner under the stars. The menu is Mediterranean and Asian-inspired and locally sourced: sushi, crab cakes, ahi tuna, grilled lamb rack and a chimichurri hanger steak, with plenty of fresh fish for Megan. An ideal first-night dinner after travel — beautiful, close, and not the least bit stuffy.",
+fun:"It sits on a genuine pink-sand beach — the blush color comes from crushed coral and red foraminifera shells.",status:"",
+imgs:["https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd9bf6d4ddc4ab7371_loren-bermuda-pink-beach-man-pouring-champagne.avif","https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd06ad71f2dbd00c7e_loren-bermuda-pink-beach-fish-dish.avif","https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cd031aa00075831c8b_loren-bermuda-pink-beach-food-on-table.avif","https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cda55d11ef9f98da75_loren-bermuda-pink-beach-veggie-bowl.avif","https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf6cf8da87495a7a40286_loren-bermuda-drink-pour-at-table.avif"],
+menus:[{l:"Dinner",u:"https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/69e0db6bbe3f74f5853e036e_03TheLoren-Bermuda-Menu-2026-Spring-Dinner.pdf"},{l:"Lunch",u:"https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/69e0db84d261115ad07d8256_02TheLoren-Bermuda-Menu-2026-Spring-Lunch.pdf"},{l:"Wine & Spirits",u:"https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/6977bc76eb257377575071ea_TheLoren-Bermuda-Menu-%202025-%20Fall-DrinksWineSpirits.pdf"}],
+phone:"+1 441-293-1666",email:"",web:"https://www.thelorenhotels.com/bermuda/dining",resP:"opentable",resU:"https://www.opentable.com/r/the-pink-beach-club-tuckers-town",hours:"Breakfast 7–11am · Lunch 11am–5pm · Dinner 5–10pm · Sunday brunch 11am–3pm"},
+
+{id:"maree",name:"Marée Lounge",area:"The Loren at Pink Beach · Tucker's Town",region:"Tucker's Town & Flatts",lat:32.3216,lng:-64.7103,setting:"waterfront",drive:5,fine:true,cuisine:"Cocktails & bites",meal:"dinner",price:"$$$$",rating:4.3,reviews:16,src:"OpenTable",
+short:"The Loren's sleek ocean-view lounge — handcrafted cocktails, elevated bites and live jazz; home of the SHIO Nikkei pop-up in 2026.",
+desc:"Marée is the sleek, ocean-facing lounge at The Loren — floor-to-ceiling glass, an art-lined wall and endless Atlantic views. It operates as a swanky evening haunt: handcrafted cocktails and elevated bites like lobster spring rolls and tuna tacos, with live jazz on alternating Thursdays. For spring and summer 2026 the lounge hosts SHIO by The Loren, a Japanese-Peruvian (Nikkei) pop-up. It's the perfect pre-dinner cocktail stop before The Pink Beach Club downstairs — five minutes from Rosewood.",
+fun:"In 2026 Marée hosts SHIO, a Nikkei (Japanese-Peruvian) pop-up — one of the most interesting culinary events on the island this summer.",status:"Evenings Tue–Sun · closed Mondays",
+imgs:["https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf8d04ccc26e2d0ab5b11_loren-bermuda-maree-interior.avif","https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf8d1f4f0702044dacca8_loren-bermuda-maree-art-wall.avif","https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf8d1722c04d527872dee_loren-bermuda-maree-waitress-pouring-water.avif","https://cdn.prod.website-files.com/68dad6bc0225744b93d405ae/68dbf8d1df5488ef4aa83b99_loren-bermuda-maree-event-setup.avif"],
+menus:[{l:"Specials",u:"https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/699dc7b3fe1918ebcede2752_TheLoren-Bermuda-Menu-MareeInsert-Feb%202026.pdf"},{l:"Cocktails",u:"https://cdn.prod.website-files.com/68dad6bc0225744b93d405bb/68dad6bc0225744b93d40e6e_June10-25%20Mare%20Drink%20Menu-WEB.pdf"}],
+phone:"+1 441-293-1666",email:"",web:"https://www.thelorenhotels.com/bermuda/dining/maree-lounge",resP:"phone",resU:"",hours:"Tue–Sun 5–11pm · closed Mondays"},
+
+{id:"pantry",name:"Village Pantry",area:"Flatts Village · 8 North Shore Rd",region:"Tucker's Town & Flatts",lat:32.3220,lng:-64.7378,setting:"waterfront",drive:12,fine:false,cuisine:"International",meal:"both",price:"$$",rating:4.6,reviews:494,src:"OpenTable",
+short:"Bright all-day restaurant and coffee house overlooking Flatts Inlet — local fish, grass-fed meats and a standout vegan menu.",
+desc:"Set in pastel-painted Flatts Village a two-minute stroll from the aquarium, Village Pantry is a bright, airy all-day restaurant and coffee house from the team behind Devil's Isle, overlooking the turquoise water of Flatts Inlet. The philosophy is conscious sourcing: grass-fed beef, certified-humane chicken, local fish and locally grown vegetables — with a vegan menu strong enough to win Best Place for Veggie Lovers. Mornings bring small-batch island-roasted coffee and weekend brunch; evenings shift to innovative seafood and generous steaks with a serious wine list. Families love the gazebo seating; an easy, polished, multi-generational pick 12 minutes from the hotel.",
+fun:"The coffee is hand-roasted on-island by Devil's Isle Coffee Company's award-winning roaster, and the wine list includes Austrian grapes vinified exclusively for the group.",status:"",
+imgs:["https://www.villagepantry.bm/wp-content/uploads/rest-1of4-e1541169236695-300x300.jpg","https://www.villagepantry.bm/wp-content/uploads/2018-12-15-14.56.43-e1547830842422-300x300.jpg","https://www.villagepantry.bm/wp-content/uploads/food-banner-1-e1547823521675-300x300.jpg","https://www.villagepantry.bm/wp-content/uploads/make-your-own-pizza-web1-e1548881417355.jpg"],
+menus:[{l:"Lunch & Dinner",u:"https://www.villagepantry.bm/wp-content/uploads/lunch-dinner-vp-2024.pdf"},{l:"Breakfast",u:"https://www.villagepantry.bm/wp-content/uploads/breakfast-vp-2024.pdf"},{l:"Kids",u:"https://www.villagepantry.bm/wp-content/uploads/kids-menu.pdf"},{l:"Wine",u:"https://www.villagepantry.bm/wp-content/uploads/wine-list-vp-2024.pdf"}],
+phone:"+1 441-478-2300",email:"",web:"https://www.villagepantry.bm",resP:"opentable",resU:"https://www.opentable.com/r/village-pantry-hamilton",hours:"Daily · Lunch Mon–Thu 11:30am–5pm · Brunch Fri–Sun 9am–5pm · Dinner nightly 5–9:30pm"},
+
+{id:"rustico",name:"Rustico Restaurant & Pizzeria",area:"Flatts Village · opposite the aquarium",region:"Tucker's Town & Flatts",lat:32.3232,lng:-64.7395,setting:"waterview",drive:12,fine:false,cuisine:"Italian",meal:"both",price:"$$$",rating:4.1,reviews:403,src:"TripAdvisor",
+short:"Award-winning casual Italian opposite the Flatts aquarium — wood-fired pizza, homemade pasta and local seafood at fair prices.",
+desc:"Directly across the road from the Bermuda Aquarium in photogenic Flatts Village, Rustico is the island's favorite out-of-town Italian — a casual, family-run trattoria in a freshly renovated space with an outdoor terrace looking across the lane to Flatts Inlet. Wood-fired pizzas with thin, blistered crusts are the headline act, backed by homemade pastas like tagliatelle al ragù and lobster ravioli, fresh local seafood and Bermuda fish chowder, with classic tiramisu and limoncello to finish. Winner of multiple Best of Bermuda Awards and reasonably priced for the island — pair it with an aquarium visit and book by phone for dinner.",
+fun:"Rustico won Best of Bermuda's 'Best Out of Town Eatery' and recently moved into a renovated space steps from its original home.",status:"",
+imgs:["https://static.wixstatic.com/media/654292_d602cb281f204b5dae4ea270ecde8ecc.jpg/v1/fill/w_580,h_240,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/654292_d602cb281f204b5dae4ea270ecde8ecc.jpg","https://static.wixstatic.com/media/654292_c91a2989e67b4913b08dcf29032b0faa.jpg/v1/fill/w_538,h_440,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/654292_c91a2989e67b4913b08dcf29032b0faa.jpg","https://static.wixstatic.com/media/654292_beb75854e33b4f7ab0916e125cee6eef.jpg/v1/fill/w_588,h_392,al_c,q_80,enc_avif,quality_auto/654292_beb75854e33b4f7ab0916e125cee6eef.jpg"],
+menus:[{l:"Lunch",u:"https://www.bermuda-dining.com/lunch-menu-mr6cq"},{l:"Dinner",u:"https://www.bermuda-dining.com/dinner-menu-idhvm"},{l:"Wine",u:"https://www.bermuda-dining.com/wine-list-p4yrj"}],
+phone:"+1 441-295-5212",email:"rustico@bermuda-dining.com",web:"https://www.bermuda-dining.com/rustico",resP:"phone",resU:"",hours:"Mon–Thu lunch 11:45am–2:30pm, dinner 5–10pm · Fri–Sun all day 11:30am–10pm"},
+
+{id:"shellybay",name:"Shelly Bay Beach Concession",area:"Shelly Bay Beach · North Shore Rd",region:"Tucker's Town & Flatts",lat:32.3268,lng:-64.7270,setting:"beachfront",drive:14,fine:false,cuisine:"Beach bar",meal:"lunch",price:"$",rating:null,reviews:null,src:"",
+short:"Simple seasonal beach stand on family-friendly Shelly Bay — fish sandwiches, jerk chicken and chair rentals on the sand.",
+desc:"Shelly Bay is Hamilton Parish's big, shallow, kid-perfect public beach on the North Shore — soft sand, knee-deep water for a long way out and a large playground. The food offering is a modest seasonal concession rather than a true restaurant: in recent seasons a stand has served fish sandwiches, jerk chicken, curries, wraps, burgers and cold drinks, alongside lounger, umbrella and snorkel rentals. Offerings change year to year, so treat it as a handy refuel stop while beaching, not a dining destination.",
+fun:"Shelly Bay's flat backshore was home to Bermuda's horse-racing track in the 1800s, and the bay is named for a passenger on the 1609 Sea Venture wreck.",status:"Seasonal concession — offerings vary; verify on arrival",
+imgs:[],menus:[],phone:"",email:"",web:"https://www.facebook.com/ShellyBayBeachBermuda/",resP:"none",resU:"",hours:"Seasonal (roughly Apr–Nov), daytime beach hours, weather-dependent"},
+
+{id:"wahoos",name:"Wahoo's Waterside Bistro & Patio",area:"St George's · 36 Water St",region:"St George's & St David's",lat:32.3818,lng:-64.6776,setting:"waterfront",drive:15,fine:false,cuisine:"Seafood",meal:"both",price:"$$$",rating:4.2,reviews:1495,src:"TripAdvisor",
+short:"St George's favourite for fresh-caught wahoo and award-winning fish chowder, with a patio deck hanging over the harbour.",
+desc:"A St George's institution on Water Street, Wahoo's spills from a cozy bistro dining room onto a wooden patio perched directly over St George's Harbour, where you can watch boats drift past at sunset. The owners — veterans with decades in Bermuda kitchens — built the menu around locally caught fish: an entire page is devoted to the namesake wahoo (nuggets, tacos, burgers), alongside rockfish Picasso, an award-winning Bermuda fish chowder laced with black rum and sherry peppers, and daily blackboard specials. During lobster season they serve fresh Bermuda spiny lobster. Routinely called the busiest restaurant in the historic district — book ahead.",
+fun:"The menu's quirky signature is a whole page of dishes made from one fish — the wahoo — plus a Wiener schnitzel sandwich nodding to the owner's European training.",status:"Closed Mondays",
+imgs:[],
+menus:[{l:"Menu & Wine",u:"https://wahoos.bm/menus/wahoos-menu/"},{l:"All menus",u:"https://wahoos.bm/menus/"}],
+phone:"+1 441-297-1307",email:"wahoos@logic.bm",web:"https://wahoos.bm",resP:"phone",resU:"",hours:"Tue–Sun lunch & dinner ~11:30am–9:30pm · closed Mondays"},
+
+{id:"whitehorse",name:"White Horse Pub & Restaurant",area:"St George's · 8 King's Square",region:"St George's & St David's",lat:32.3792,lng:-64.6778,setting:"waterfront",drive:15,fine:false,cuisine:"Pub fare",meal:"both",price:"$$",rating:3.8,reviews:653,src:"TripAdvisor",
+short:"Bermuda's oldest pub (1930, in a 1700s building) with a patio jutting directly over St George's Harbour.",
+desc:"Anchoring King's Square at the water's edge, the White Horse is Bermuda's oldest pub — the building dates to the mid-1700s and Ye Olde White Horse Tavern opened here in 1930. Today it pairs historic charm with a modern Bermudian menu: wahoo nuggets, golden fried calamari, crispy avocado rolls, half jerk chicken with chimichurri and classic fish & chips. The waterside patio juts over the harbour, where huge schools of fish gather below the tables waiting for scraps — a hit with kids and grandmothers alike. Live entertainment and a laid-back mix of locals and visitors make it the easy, atmospheric choice on the town's main square.",
+fun:"Lean over the patio rail and you'll see schools of fish that have learned to gather below diners' tables — feeding them is a White Horse tradition.",status:"",
+imgs:["https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/69eb867c717d5dd4e1a65f74.jpg","https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/6995f982fa6b7b7b9635cd73.png","https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/69eb82b2a48992f68935100e.png","https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/69eb84186c819d3c6f594e7c.png"],
+menus:[{l:"Menu",u:"https://whitehorsebermuda.com/menu"}],
+phone:"+1 441-297-1838",email:"",web:"https://www.whitehorsebermuda.com",resP:"web",resU:"https://whitehorsebermuda.com/book-a-table",hours:"Daily 10am–10pm"},
+
+{id:"wharf",name:"The Wharf",area:"St George's · 14 Water St, Somers Wharf",region:"St George's & St David's",lat:32.3801,lng:-64.6789,setting:"waterfront",drive:15,fine:false,cuisine:"International",meal:"both",price:"$$",rating:4.0,reviews:303,src:"TripAdvisor",
+short:"Dockside tables at the harbour's edge on Somers Wharf — Bermuda fish, sushi, pizza and seasonal lobster, open daily till late.",
+desc:"Set on Somers Wharf, The Wharf claims one of the most picturesque waterfront perches in the old town, with tables right at the harbour's edge and service running later than most St George's kitchens. The menu is the widest-ranging in town: Bermuda fish chowder with Gosling's Black Seal rum, fresh wahoo and pan-fried rockfish delivered daily, herb-crusted rack of lamb, a full sushi program with elaborate special rolls, pizzas named after local landmarks — and in season, Bermuda spiny lobster served broiled, Thermidor or curried. Fresh off a $600K kitchen renovation in 2025. Open seven days, closing only for Christmas.",
+fun:"Its 12-inch pizzas are all named after St George's landmarks and lore — Deliverance, The Stocks, Fort St Catherine's — and the wine list features an unusual roster of Serbian estates.",status:"",
+imgs:["https://wharf.bm/images/about.jpg"],
+menus:[{l:"Lunch",u:"https://wharf.bm/menu.php?t=lunch"},{l:"Dinner",u:"https://wharf.bm/menu.php?t=dinner"},{l:"Sushi",u:"https://wharf.bm/menu.php?t=sushi"},{l:"Lobster (seasonal)",u:"https://wharf.bm/menu.php?t=lobster"}],
+phone:"+1 441-297-3305",email:"info@thewharf.bm",web:"https://wharf.bm",resP:"phone",resU:"",hours:"Daily · lunch from 11:30am, dinner from 5pm (closed Christmas Day only)"},
+
+{id:"tobacco",name:"Tobacco Bay Beach Bar",area:"St George's · Tobacco Bay, Coot Pond Rd",region:"St George's & St David's",lat:32.3895,lng:-64.6765,setting:"beachfront",drive:18,fine:false,cuisine:"Beach bar",meal:"lunch",price:"$$",rating:4.0,reviews:1850,src:"TripAdvisor",
+short:"Beach bar on Bermuda's most famous snorkeling cove — wahoo nuggets, rum swizzles and loungers steps from the water.",
+desc:"Tucked into a sheltered cove of turquoise water and dramatic limestone rock pillars just over the hill from St George's, Tobacco Bay was named to TripAdvisor's 2026 'Best of the Best' beaches in the world (No. 13 globally). The beachside bar and kitchen serves casual bites — burgers, wings and the must-try Bermudian wahoo nuggets — with rum swizzles, Dark 'n Stormys and mocktails delivered to your lounger. Bookable packages include a VIP day pass with reserved lounger, lunch and snorkeling. Expect live music, the island's best easy snorkeling right off the sand, and a perfect beach-day lunch 18 minutes from the hotel.",
+fun:"In the 1775 'Gunpowder Plot,' British gunpowder stolen from St George's was rolled down to Tobacco Bay and rowed out to ships supplying George Washington's army.",status:"Seasonal · daytime-focused (later Fri & Sun)",
+imgs:["https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/6a0ae58a2e98e28fa18fdc7c.jpg","https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/69e678643ea93d9dd2e16fdf.jpg","https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/69e678643ea93d9dd2e16fe4.jpg","https://assets.cdn.filesafe.space/oZR5QAHZSQ5EebKWQj54/media/6a1e8c557303598210416543.jpg"],
+menus:[{l:"Beachside Menu",u:"https://tobaccobay.bm/menu"}],
+phone:"+1 441-707-1337",email:"",web:"https://tobaccobay.bm",resP:"web",resU:"https://tobaccobay.bm/book",hours:"Mon–Fri 9am–5pm · Sat–Sun 9am till late · seasonal"},
+
+{id:"achilles",name:"Achilles",area:"Achilles Bay · beside Fort St. Catherine",region:"St George's & St David's",lat:32.3901,lng:-64.6695,setting:"beachfront",drive:20,fine:true,cuisine:"Mediterranean",meal:"both",price:"$$$",rating:4.7,reviews:183,src:"OpenTable",
+short:"Stylish 'MediterrAsian' tavern overlooking Achilles Bay beach beside Fort St. Catherine — the East End's best sunsets.",
+desc:"Opened in 2024 by the Little Venice Group on the site of the old Blackbeard's Hideout, Achilles is a modern tavern-by-the-sea directly opposite Fort St. Catherine, overlooking the impossibly clear water of Achilles Bay. The kitchen, led by Italian chef Guido Brambilla, cooks 'MediterrAsian' cuisine — Mediterranean simplicity meeting Asian spice — from salmon crispy rice and sushi to local-boat fish and sustainably farmed meats. Indoors is sleek and ocean-facing; the outdoor lawn pours cocktails from noon with no reservation needed, and the sunsets are the best in the East End. Twenty minutes from Rosewood and fully cashless (cards only).",
+fun:"Its no-reservation sunset lawn ('Let's Sunset') has its own following — and the restaurant is entirely cashless.",status:"",
+imgs:["https://static.wixstatic.com/media/8a2f3e_8e03fd5ed37c441cb1c101810e6dadeb~mv2.jpg/v1/fill/w_1600,h_900,al_c,q_85/8a2f3e_8e03fd5ed37c441cb1c101810e6dadeb~mv2.jpg","https://static.wixstatic.com/media/68c975_0c4a4a2768f44a138cb016c44c653662~mv2.jpg/v1/fill/w_1200,h_900,al_c,q_85/68c975_0c4a4a2768f44a138cb016c44c653662~mv2.jpg","https://static.wixstatic.com/media/8a2f3e_d8bef4ba076b4202b4ad745ce4c491b6~mv2.jpg/v1/fill/w_1200,h_800,al_c,q_85/8a2f3e_d8bef4ba076b4202b4ad745ce4c491b6~mv2.jpg","https://static.wixstatic.com/media/8a2f3e_32839aa52918411988c5043176493446~mv2.jpg/v1/fill/w_800,h_1200,al_c,q_85/8a2f3e_32839aa52918411988c5043176493446~mv2.jpg"],
+menus:[{l:"Lunch",u:"https://www.achilles.bm/_files/ugd/8a2f3e_ed3a137610ac4f5989498a58d72d707e.pdf"},{l:"Dinner",u:"https://www.achilles.bm/_files/ugd/8a2f3e_11c386ede4e8455c8a5a7f6dcbdd966f.pdf"},{l:"Drinks",u:"https://www.achilles.bm/_files/ugd/8a2f3e_ff3d4dd1b6e444859bd84eca26fbf9de.pdf"}],
+phone:"+1 441-297-1717",email:"info@achilles.bm",web:"https://www.achilles.bm",resP:"opentable",resU:"https://www.opentable.com/r/achilles-restaurant-town-of-st-george",hours:"Daily · lunch 12–2:30pm, dinner 6–9pm · lawn bar from noon (no reservations)"},
+
+{id:"lina",name:"Lina & BLT Steak NY",area:"St. Regis Bermuda · 34 Coot Pond Rd",region:"St George's & St David's",lat:32.3894,lng:-64.6745,setting:"beachfront",drive:20,fine:true,cuisine:"Steakhouse",meal:"both",price:"$$$$",rating:4.6,reviews:191,src:"OpenTable",
+short:"The St. Regis's glamorous beachfront dining room: Lina for breakfast and lunch, BLT Steak NY's modern steakhouse by night.",
+desc:"One glamorous oceanfront dining room at The St. Regis Bermuda, two personalities. By day it is Lina — named for Caroline 'Lina' Astor, matriarch of the St. Regis founding family — serving elegant breakfasts and fresh coastal lunches with a Latin twist on a terrace above St Catherine's Beach, with views toward Fort St. Catherine. By night the space turns over to BLT Steak NY (Bistro Laurent Tourondel): contemporary steakhouse fare with classic cuts, fresh seafood, the famous complimentary gruyère popovers and a serious wine list. The adjacent St. Regis Bar pours champagne and sushi from 1pm. The most polished special-occasion option in the East End — 20 minutes from Rosewood.",
+fun:"BLT stands not for the sandwich but for 'Bistro Laurent Tourondel' — and dinner opens with the chef's famous warm gruyère popovers.",status:"Confirm BLT dinner nights for July by phone",
+imgs:["https://cache.marriott.com/content/dam/marriott-renditions/BDAXR/bdaxr-exterior-view-9204-hor-wide.jpg?output-quality=70&interpolation=progressive-bilinear&downsize=1336px:*","https://cache.marriott.com/content/dam/marriott-renditions/BDAXR/bdaxr-blt-steak-9551-hor-clsc.jpg?output-quality=70&interpolation=progressive-bilinear&downsize=856px:*","https://cache.marriott.com/content/dam/marriott-renditions/BDAXR/bdaxr-the-bar-3963-hor-clsc.jpg?output-quality=70&interpolation=progressive-bilinear&downsize=856px:*"],
+menus:[{l:"Lina Lunch",u:"https://www.marriott.com/content/dam/marriott-digital/xr/cala/hws/b/bdaxr/en_us/document/assets/xr-bdaxr-taste-of-lina-menu-41756.pdf"},{l:"Lina Dinner",u:"https://www.marriott.com/content/dam/marriott-digital/xr/cala/hws/b/bdaxr/en_us/document/assets/xr-bdaxr-lina-dinner-menu-15303.pdf"},{l:"BLT Steak Dinner",u:"https://www.marriott.com/content/dam/marriott-digital/xr/cala/hws/b/bdaxr/en_us/document/assets/xr-bdaxr-blt-steak-menu-32892.pdf"},{l:"BLT Dessert",u:"https://www.marriott.com/content/dam/marriott-digital/xr/cala/hws/b/bdaxr/en_us/document/assets/xr-bdaxr-blt-dessert-menu-14106.pdf"}],
+phone:"+1 441-543-2222",email:"restaurants.bda@stregis.com",web:"https://www.marriott.com/en-us/hotels/bdaxr-the-st-regis-bermuda-resort/dining/",resP:"opentable",resU:"https://www.opentable.com/r/blt-steak-ny-at-the-st-regis-bermuda-resort-town-of-st-george",hours:"Lina: breakfast 7–10:30am, lunch 12–3pm · BLT Steak: dinner 6–10pm · St. Regis Bar 1–11pm"},
+
+{id:"blackhorse",name:"Black Horse Tavern",area:"St David's · 101 St David's Rd",region:"St George's & St David's",lat:32.3670,lng:-64.6576,setting:"waterfront",drive:18,fine:false,cuisine:"Bermudian",meal:"both",price:"$$",rating:4.0,reviews:300,src:"TripAdvisor",
+short:"Legendary St David's seafood tavern overlooking Great Bay — fish chowder, shark hash and arguably Bermuda's best fish sandwich.",
+desc:"Tucked at the far eastern tip of the island in St David's, Black Horse Tavern is widely considered Bermuda's most authentic local restaurant — the kind of place islanders drive across the island for. Its green-shuttered dining room and waterside patio look straight over Great Bay and its scattering of tiny islets, where herons stalk the shallows and fishing boats tie up at the dock. The kitchen is famous for old-school East End cooking: curried conch stew, Bermuda fish chowder laced with black rum and sherry peppers, stuffed lobster in season, and what many argue is the best fish sandwich in Bermuda. Defiantly unfussy, cash-friendly and worth every minute of the short trip.",
+fun:"It is one of the only places left serving shark hash — a peppery minced-shark specialty unique to St David's Island, traditionally eaten on toast.",status:"Closed Mondays · call ahead to confirm hours",
+imgs:[],menus:[],
+phone:"+1 441-297-1991",email:"",web:"https://www.facebook.com/people/Black-Horse-Tavern-Restaurant-Bar/100064085381959/",resP:"phone",resU:"",hours:"Lunch & dinner Tue–Sun · typically closed Mondays"},
+
+{id:"sunjammers",name:"Sunjammers Bar & Grill",area:"Clearwater Beach · St David's",region:"St George's & St David's",lat:32.3477,lng:-64.6582,setting:"beachfront",drive:20,fine:false,cuisine:"Beach bar",meal:"lunch",price:"$$",rating:null,reviews:null,src:"",
+short:"Laid-back toes-in-the-sand beach bar on Clearwater Beach — fish sandwiches, rum swizzles and chairs steps from calm turquoise water.",
+desc:"Sunjammers is the toes-in-the-sand beach bar on Clearwater Beach at the entrance to Cooper's Island Nature Reserve, one of the prettiest and most family-friendly stretches of the East End. Opened in 2022, it quickly became the area's summer hangout: chilled draught beer, rum swizzles and frozen cocktails you can carry right onto the sand, plus a short, satisfying grill menu of fish sandwiches, wahoo nuggets and burgers. The vibe is pure local — DJs and live-music events, beach chair and umbrella rentals, and calm, shallow turquoise water a few steps from your table. An easy beach-day lunch 20 minutes from the hotel.",
+fun:"Clearwater Beach sits on land that was a U.S. military airbase (and later a NASA tracking-station site) until 1995 — the beach itself is partly man-made.",status:"Seasonal · hours vary — check Instagram @sunjammersbda",
+imgs:["https://images.squarespace-cdn.com/content/v1/628ec852cc53bc556f9d9b81/a990174e-04bb-49a8-8b70-0d13f0e8104f/IMG_5624.jpeg","https://images.squarespace-cdn.com/content/v1/628ec852cc53bc556f9d9b81/57a0a9ed-eabe-4fe6-8c04-4aafd1211907/8ee028fa-9fae-42bb-bdc1-296fcfb12148.jpeg","https://images.squarespace-cdn.com/content/v1/628ec852cc53bc556f9d9b81/929725af-1442-4993-b81d-3b0925cc6d74/db3faa1f-3ec8-4f73-96ca-5a6df5d9cb06.JPG"],
+menus:[{l:"Menu (Apr 2026)",u:"https://images.squarespace-cdn.com/content/v1/628ec852cc53bc556f9d9b81/f62be9c2-be2d-40c3-ac71-db44d3134072/Website+Menu+April2026.jpg"},{l:"Menu page",u:"https://www.sunjammersbda.com/menu"}],
+phone:"+1 441-538-5266",email:"hello@sunjammersbda.com",web:"https://www.sunjammersbda.com",resP:"none",resU:"",hours:"Open daily in beach season · hours vary by day"},
+{id:"barracuda",name:"Barracuda Grill",area:"Hamilton · 5 Burnaby Hill",region:"Hamilton & Central",lat:32.2925,lng:-64.7855,setting:"none",drive:27,fine:true,cuisine:"Seafood",meal:"dinner",price:"$$$$",rating:4.4,reviews:880,src:"TripAdvisor",
+short:"Hamilton's most enduring fine-dining institution — contemporary seafood and chops a block up from Front Street (no water view).",
+desc:"Elegant and polished with warm lighting and an intimate room, Barracuda Grill is Bermuda's most enduring fine-dining institution, a block up from Front Street in Hamilton. The menu is contemporary seafood and chops: locally sourced fish and shellfish, prime beef, and a seasonal carte backed by an excellent wine and cocktail program — the bar is a multiple Best of Bermuda winner. It's the one non-waterfront restaurant we kept on this list, because it remains one of the island's very best proper nights out, and it covers Megan's seafood and Diane's surf-or-turf preferences perfectly.",
+fun:"Holds the DiRoNA award (Distinguished Restaurants of North America) — one of the most prestigious dining honors in the hemisphere.",status:"",
+imgs:["https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120468-968K8Y941HTRPGTR4ILH/bg1.jpg","https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070120374-26ZFZT6FWOSWS45MH6I3/bg2.jpg","https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070121736-F83UABMGB0T8UD9SVAUM/bg3.jpg","https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070123165-P56C51KD0FW82X0Y8129/bg4.jpg","https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1721070363759-6PJTS777VXZQG8TM01II/bg5.jpg"],
+menus:[{l:"Dinner",u:"https://www.irg.bm/s/Barracuda-Dinner-SEPT-2025-FINAL-for-Print-V113.pdf"},{l:"Lunch",u:"https://www.irg.bm/s/Barracuda-Lunch-SEPT-2025-FINAL-for-Print-V113.pdf"},{l:"Cocktails",u:"https://www.irg.bm/s/BG-Cocktails-Dinner-April-26.pdf"},{l:"Wine",u:"https://www.irg.bm/s/BG-Wine-List-May-26.pdf"}],
+phone:"+1 441-292-1609",email:"",web:"https://www.irg.bm/barracuda-grill",resP:"opentable",resU:"https://www.opentable.com/r/barracuda-grill-hamilton",hours:"Lunch Mon–Fri 12–2:30pm · Dinner daily 5:30–10pm · Bar until 11pm"},
+
+{id:"intrepid",name:"Intrepid",area:"Hamilton Princess · 76 Pitts Bay Rd",region:"Hamilton & Central",lat:32.2945,lng:-64.7900,setting:"waterfront",drive:27,fine:true,cuisine:"Steakhouse",meal:"dinner",price:"$$$$",rating:4.9,reviews:579,src:"OpenTable",
+short:"Art Deco steak, seafood and raw bar with panoramic Hamilton Harbour views at the Hamilton Princess.",
+desc:"Intrepid is the Hamilton Princess's showpiece: an Art Deco interior with panoramic Hamilton Harbour views and a stunning raw bar as its centerpiece — oysters, caviar, temaki sushi and prime cuts dry-aged by Niman Ranch and Debragga & Spitler. The restaurant grows its own herbs overlooking the harbour, and the room glows at sunset. One of the highest-rated dinners on the island (4.9 on OpenTable), it's a glamorous Hamilton night out that still covers every taste at the table. Closed Sundays.",
+fun:"Named after WWII spymaster Sir William Stephenson — codename 'Intrepid' — who ran his network from this hotel and is widely believed to be a James Bond inspiration. A KAWS original hangs in the room.",status:"Closed Sundays",
+imgs:["https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-intrepid-1100x550.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2024/01/intrepid-restaurant-top-banner-Jan24-02-1600x555.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-steak-07-1600x555.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2025/03/BannerContent_Hamilton-Princess-food-1100x550.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2022/07/intrepid-restaurant-top-banner-entrance-04-1600x555.jpg"],
+menus:[{l:"Dinner",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2025/11/PRIN_Intrepid_Menu_5Nov25.pdf"},{l:"Dessert",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2025/11/PRIN_Intrepid_DESSERT_Menu_05Nov25.pdf"},{l:"Cocktails",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/03/Intrepid-Cocktail-Menu-23Mar26.pdf"}],
+phone:"+1 441-298-2028",email:"Ham.DiningReservations@fairmont.com",web:"https://www.thehamiltonprincess.com/dining/intrepid/",resP:"opentable",resU:"https://www.opentable.com/r/intrepid-hamilton-princess-and-beach-club-hamilton",hours:"Dinner Mon–Sat 6–10pm · cocktails from 5pm · closed Sundays"},
+
+{id:"r1609",name:"1609 Bar & Restaurant",area:"Hamilton Princess marina",region:"Hamilton & Central",lat:32.2934,lng:-64.7931,setting:"waterfront",drive:27,fine:false,cuisine:"Latin",meal:"both",price:"$$$",rating:4.4,reviews:988,src:"TripAdvisor",
+short:"Breezy open-air restaurant on the Hamilton Princess marina — Latin-island menu, famous margaritas and superyacht views.",
+desc:"Set at the edge of the Hamilton Princess marina, 1609 is the hotel's breezy, open-air waterfront restaurant, with tables practically over the water and uninterrupted views of superyachts drifting across Hamilton Harbour — one of the best sunset perches in the city. The kitchen leans island-to-Latin: fresh local catch, ceviche, guacamole and shrimp tacos, backed by a playful cocktail program featuring the Mango Sriracha Margarita. Margarita Mondays and Friday-night Marina Nights add a festive pulse in summer. Casual enough for lunch in cover-ups, atmospheric enough for a long golden-hour dinner.",
+fun:"Named for 1609, the year the Sea Venture wrecked on Bermuda's reefs — the shipwreck that led to the island's settlement and inspired Shakespeare's The Tempest.",status:"Seasonal (summer)",
+imgs:["https://www.thehamiltonprincess.com/wp-content/uploads/2025/03/Banner-HamiltonPrincess-1609.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-food1609-1100x550.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-dining1609-1100x550.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2025/03/BannerContent-HamiltonPrincess-1609-5-1100x550.jpg"],
+menus:[{l:"Main Menu",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/03/1609-Menu-27Mar26.pdf"},{l:"Cocktails",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/03/1609-Cocktail-Menu-27Mar26.pdf"},{l:"Dessert",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/04/1609-Dessert-Menu-6Apr26.pdf"},{l:"Wine",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/05/1609-Wine-Menu-7May26.pdf"}],
+phone:"+1 441-298-2028",email:"Ham.DiningReservations@fairmont.com",web:"https://www.thehamiltonprincess.com/dining/1609-restaurant/",resP:"opentable",resU:"https://www.opentable.com/r/1609-restaurant-hamilton-princess-and-beach-club-hamilton-2",hours:"Daily 11:30am–10pm · Marina Bar 1–10pm"},
+
+{id:"crown",name:"Crown & Anchor",area:"Hamilton Princess · 76 Pitts Bay Rd",region:"Hamilton & Central",lat:32.2940,lng:-64.7929,setting:"waterfront",drive:27,fine:false,cuisine:"International",meal:"both",price:"$$$",rating:4.3,reviews:239,src:"OpenTable",
+short:"The Hamilton Princess's lively all-day brasserie and rum bar — harbour-terrace seating, Sunday brunch and afternoon tea.",
+desc:"Crown & Anchor is the Hamilton Princess's all-day brasserie and lounge — marble bar, terrace seating overlooking the pool and harbour, and live entertainment many evenings. It's the hotel's social hub: lavish buffet breakfasts, long lunches, casual dinners, a late-night menu until midnight and one of Bermuda's deepest rum collections. The Sunday buffet brunch is a local institution, and traditional Afternoon Tea (3–5pm) keeps the property's 140-year British heritage alive — something Diane might love as a non-dinner outing. Bermudian comfort classics like rum-spiked fish chowder anchor an international menu that pleases every generation.",
+fun:"It's named after Crown & Anchor, the beloved dice game played at Bermuda's Cup Match — and it serves the Pink Palace's traditional Afternoon Tea.",status:"",
+imgs:["https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/Banner-HamiltonPrincess-CA-Barl-1600x555.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2025/10/BannerContent-hamiton-princess-foodcrownanchor9-1100x550.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2025/03/Banner-HamiltonPrincess-CrownAnchor-1100x550.jpg","https://www.thehamiltonprincess.com/wp-content/uploads/2025/03/BannerContent-CAFood-1100x550.jpg"],
+menus:[{l:"Lunch & Dinner",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/04/CA-lunch-and-dinner-menu-28April26.pdf"},{l:"Sunday Brunch",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/01/CA-sunday-brunch-buffet-menu-26Jan26.pdf"},{l:"Dessert",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2025/09/CA-dessert-menu-08Sep25.pdf"},{l:"Wine",u:"https://www.thehamiltonprincess.com/wp-content/uploads/2026/03/CA-wine-list-menu-27Mar26.pdf"}],
+phone:"+1 441-298-2028",email:"Ham.DiningReservations@fairmont.com",web:"https://www.thehamiltonprincess.com/dining/crown-anchor/",resP:"opentable",resU:"https://www.opentable.com/crown-and-anchor-hamilton-princess-and-beach-club",hours:"Daily · breakfast 7–10:30am · lunch 12–5pm · tea 3–5pm · dinner 5–10:30pm · late menu to 12am"},
+
+{id:"harbourfront",name:"Harbourfront Restaurant",area:"Hamilton · 40 Crow Lane, at BUEI",region:"Hamilton & Central",lat:32.2936,lng:-64.7728,setting:"waterfront",drive:25,fine:true,cuisine:"Sushi & seafood",meal:"both",price:"$$$",rating:4.2,reviews:405,src:"TripAdvisor",
+short:"Acclaimed harbourside fine dining — award-winning sushi, local fish and dry-aged steaks with sweeping sunset views over Hamilton Harbour.",
+desc:"Perched on the water beside the Bermuda Underwater Exploration Institute on Hamilton Harbour's eastern edge, Harbourfront has been one of the island's most acclaimed special-occasion restaurants for decades. The refurbished Coral Lounge and wraparound terrace give nearly every seat an unobstructed harbour panorama — sunset over the moored sailboats is the house specialty before the food even arrives. The kitchen is famously versatile: award-winning sushi from a dedicated sushi bar (Harbourfront helped pioneer sushi in Bermuda), the freshest local catch, dry-aged steaks and seafood towers, plus a private wine room for celebrations. Polished but unstuffy — ideal for a milestone dinner like an 80th birthday.",
+fun:"Actor and travel writer Andrew McCarthy name-checked Harbourfront in his New York Times essay 'My Return Trip to Bermuda.'",status:"",
+imgs:["https://harbourfront.bm/wp-content/uploads/2025/09/HF-Sunset-1024x617.jpeg","https://harbourfront.bm/wp-content/uploads/2024/01/HF_Main-Dining-Room_1.23.24_1-1024x768.jpg","https://harbourfront.bm/wp-content/uploads/2024/01/HF_Coral-Lounge_1.23.24_3-1024x768.jpg","https://harbourfront.bm/wp-content/uploads/2024/02/HF_Seafood-Tower_2-682x1024.jpg","https://harbourfront.bm/wp-content/uploads/2024/02/HF_Food-Plate_12-1024x754.jpg"],
+menus:[{l:"Lunch & Dinner",u:"https://harbourfront.bm/wp-content/uploads/2025/12/HF-Menu_11.2025_w.pdf"},{l:"Sushi",u:"https://harbourfront.bm/wp-content/uploads/2025/11/HF-Sushi-Menu_11.2025.pdf"},{l:"Dessert",u:"https://harbourfront.bm/wp-content/uploads/2024/07/HF-Dessert-Menu_w.pdf"},{l:"Wine",u:"https://harbourfront.bm/wp-content/uploads/2026/05/HarbourfrontWinelist.pdf"}],
+phone:"+1 441-295-4207",email:"florian@harbourfront.bm",web:"https://harbourfront.bm",resP:"opentable",resU:"https://www.opentable.com/r/harbourfront-pembroke",hours:"Lunch Mon–Fri 12–2:30pm · Dinner daily 6–9:30pm"},
+
+{id:"harrys",name:"Harry's at the Waterfront",area:"Hamilton · 96 Pitts Bay Rd",region:"Hamilton & Central",lat:32.2937,lng:-64.7951,setting:"waterfront",drive:27,fine:true,cuisine:"Steakhouse",meal:"dinner",price:"$$$$",rating:4.7,reviews:542,src:"OpenTable",
+short:"Elegant harbourside steakhouse — Miles Market 21-day aged beef, local fish and a 2,000-bottle wine cellar. Closed Sundays.",
+desc:"Harry's is Hamilton's power-dining destination — a contemporary steakhouse and bar overlooking Hamilton Harbour, named in memory of legendary Bermudian raconteur Harry Cox. In partnership with Miles Market, Bermuda's premier specialty grocer next door, the kitchen builds its menu around 21-day-aged beef, pristine local fish like grilled wahoo and a renowned Bermuda fish chowder. The space pairs sleek modern design with timeless elegance: Harry's Bar, a waterside patio under umbrellas, and a 2,000-bottle cellar anchoring one of the island's most serious wine programs. Evenings on the patio are pure romance. Closed Sundays.",
+fun:"Harry's Bar exclusively pours Harry's Special Rum Blend, made to namesake Harry Cox's precise original specifications — a sip of old Bermuda.",status:"Closed Sundays",
+imgs:["https://images.squarespace-cdn.com/content/v1/6009c5afa1c26c0d4939aef5/1611254266295-9NDB3OPMRRL4CUIZ9WHQ/DSC02955.jpg","https://images.squarespace-cdn.com/content/v1/6009c5afa1c26c0d4939aef5/1611261905622-6ZDNPGFNOA2YN5VQFYKK/outside-umbrellas.jpg","https://images.squarespace-cdn.com/content/v1/6009c5afa1c26c0d4939aef5/1611261904083-BY5Z0B0OVCF301L5OQSB/inside-tables.jpg","https://images.squarespace-cdn.com/content/v1/6009c5afa1c26c0d4939aef5/1611261833911-34FRGO0VMVV9L1JVWDTS/steak.jpg","https://images.squarespace-cdn.com/content/v1/6009c5afa1c26c0d4939aef5/1611261906716-EL1P2RH3JBRFMUKHRNH7/wine-cellar.jpg"],
+menus:[{l:"Dinner",u:"https://www.harrys.bm/dinner-menu"},{l:"Lunch",u:"https://www.harrys.bm/lunch-menu"},{l:"Bar",u:"https://www.harrys.bm/bar-menu"},{l:"Wine (PDF)",u:"https://www.harrys.bm/s/Harrys-at-The-Waterfront-Wine-List-Feb2026-8t5e.pdf"}],
+phone:"+1 441-292-5533",email:"",web:"https://www.harrys.bm",resP:"opentable",resU:"https://www.opentable.com/r/harrys-restaurant-and-bar-pembroke-hm-08",hours:"Mon–Sat 12pm–10pm · closed Sundays"},
+
+{id:"pickled",name:"The Pickled Onion",area:"Hamilton · 53 Front St",region:"Hamilton & Central",lat:32.2921,lng:-64.7846,setting:"waterview",drive:27,fine:false,cuisine:"Pub fare",meal:"both",price:"$$$",rating:4.4,reviews:308,src:"Google",
+short:"Lively Front Street institution with a big covered balcony overlooking Hamilton Harbour, Bermudian favourites and live music.",
+desc:"A Front Street fixture since 1998, The Pickled Onion occupies a former 1800s whiskey-and-wine warehouse and serves Hamilton's liveliest blend of food, drinks and entertainment. Its tiled, covered balcony — one of the city's largest — looks over Hamilton Harbour and the cruise docks, making lunch here a classic Bermuda postcard. The kitchen does upscale-casual Bermudian with global twists: savoury fish chowder, perennially popular rockfish tacos, fire-grilled wahoo, at prices kinder than most of the island. The bar launched Bermuda's first martini program two decades ago and live music keeps the room buzzing late.",
+fun:"The 1800s building was once a wine-and-spirits warehouse, then the men-only 21 Club, then pub Ye Olde Cock and Feather — before becoming The Pickled Onion in 1998.",status:"",
+imgs:["https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1664904944997-JHNTYSORHSU40M2LY3L8/P1041354a.jpg","https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1664904946299-2C4YG7JUHZN1I5PVAU7W/P1041372a.jpg","https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1664905387171-U398PGJG2HRUIRDSDZAU/P1042535.JPG","https://images.squarespace-cdn.com/content/v1/5bd364a44d871186f7dbcd06/1742321093934-Z1HRR1SZZW14KHMOY6BG/PickledOnion2933.jpg"],
+menus:[{l:"Dinner",u:"https://www.irg.bm/s/PO-Dinner-MAR-2026-FINAL.pdf"},{l:"Lunch",u:"https://www.irg.bm/s/PO-Lunch-MAR-2026-FINAL.pdf"},{l:"Brunch",u:"https://www.irg.bm/s/PO_BrunchMenu2024_85x11_2.pdf"},{l:"Cocktails",u:"https://www.irg.bm/s/PO_CocktailsGlassWinesBeers_DrinksCardINSERT425x14_May2026_3.pdf"}],
+phone:"+1 441-295-2263",email:"pickledonion@irg.bm",web:"https://www.irg.bm/pickled-onion",resP:"web",resU:"http://book.irg.bm",hours:"Kitchen daily 11:30am–10pm · bar 11am–1am · Sunday brunch 10am–2pm"},
+
+{id:"blu",name:"Blu Bar & Grill",area:"Warwick · Belmont Hills Golf Club",region:"Hamilton & Central",lat:32.2760,lng:-64.7997,setting:"waterview",drive:32,fine:true,cuisine:"International",meal:"dinner",price:"$$$",rating:4.8,reviews:218,src:"OpenTable",
+short:"Hilltop dinner spot with panoramic sunset views over the Great Sound — steaks, sushi and handmade pasta.",
+desc:"High on a hillside at the Belmont Hills Golf Course in Warwick, Blu commands what many call the best dinner view in Bermuda — a sweeping panorama across the fairways to the Great Sound and Hamilton Harbour, glowing at sunset. The dinner-only menu is bold American with generous Italian and Asian influences: fine steaks including a showpiece tomahawk, fresh local fish, handmade pastas and a genuinely good sushi bar, backed by an award-winning wine list. Smart-casual dress (Bermuda shorts pass muster; flip-flops don't). A multi-year Best of Bermuda winner.",
+fun:"You can watch the last golfers putt out on the 18th as the sun drops into the Great Sound.",status:"Dinner only · smart casual",
+imgs:["https://www.blu.bm/wp-content/themes/blu/images/banner/1.jpg","https://www.blu.bm/wp-content/themes/blu/images/banner/2.jpg","https://www.blu.bm/wp-content/themes/blu/images/banner/3.jpg","https://www.blu.bm/wp-content/uploads/2024/02/Blu-Patio-2_resized-402x268.jpg"],
+menus:[{l:"Dinner",u:"https://www.blu.bm/wp-content/uploads/2024/10/Blu-Dinner-Menu_10.24.pdf"},{l:"Summer Cocktails",u:"https://www.blu.bm/wp-content/uploads/2026/05/Blu-Summer-Cocktail-Menu.pdf"},{l:"Wine",u:"https://www.blu.bm/wp-content/uploads/2026/01/BLU-Wine-List_01.2026.pdf"},{l:"Dessert",u:"https://www.blu.bm/wp-content/uploads/2023/04/Blu-Dessert-Menu_4.23.pdf"}],
+phone:"+1 441-232-2323",email:"",web:"https://www.blu.bm",resP:"opentable",resU:"https://www.opentable.com/r/blu-bar-and-grill-hamilton",hours:"Dinner nightly ~6–9:30pm"},
+
+{id:"marea",name:"Marea at Newstead",area:"Paget · Newstead Belmont Hills, 27 Harbour Rd",region:"Hamilton & Central",lat:32.2840,lng:-64.7868,setting:"waterfront",drive:30,fine:false,cuisine:"Seafood",meal:"dinner",price:"$$$",rating:null,reviews:null,src:"",
+short:"Bermuda's only fresh seafood bar over the water — oysters, king crab and champagne on Newstead's pool deck facing the Hamilton skyline.",
+desc:"Marea — Italian for 'tide' — is Bermuda's only fresh seafood bar over the water, an open-air spot on the pool level of Newstead Belmont Hills in Paget, gazing straight across Hamilton Harbour to the city lights. Its centerpiece is a seafood bar on ice: raw oysters, Alaskan king crab legs, poached Maine lobster, ceviche of the day, caviar and specialty sushi, with champagne and inventive cocktails suiting the breezy poolside setting. Happy Oyster Hour runs Wednesday to Friday 4–6pm. Seasonal — call to confirm it's open for July before planning; sister restaurant Aurora at the same resort is the year-round fallback.",
+fun:"You can arrive by water — the Hodsdon's Ferry stop is on the resort's own dock, so the Hamilton ferry drops you practically at your table.",status:"Seasonal — confirm July opening by phone",
+imgs:["https://aurora.bm/wp-content/uploads/2016/03/by-the-pool-1.jpg","https://aurora.bm/wp-content/uploads/2016/03/by-the-pool-3.jpg","https://aurora.bm/wp-content/uploads/2016/03/by-the-pool-6.jpg","https://aurora.bm/wp-content/uploads/2016/03/by-the-pool-9.jpg"],
+menus:[{l:"Sushi",u:"https://aurora.bm/wp-content/uploads/2026/04/Aurora-Sushi-Menu_04.2026.pdf"},{l:"Cocktails",u:"https://aurora.bm/wp-content/uploads/2026/04/Aurora-Cocktail-Menu_for-printing.pdf"},{l:"Resort dining",u:"https://www.newsteadbelmonthills.com/dining/"}],
+phone:"+1 441-232-8686",email:"ga@aurora.bm",web:"https://www.newsteadbelmonthills.com/dining/",resP:"web",resU:"https://aurora.bm/reservations/",hours:"Seasonal (summer) · bar from 4pm · dinner 6–9pm · Oyster Hour Wed–Fri 4–6pm"},
+{id:"coconuts",name:"Coconuts at The Reefs",area:"Southampton · The Reefs Resort, 56 South Shore Rd",region:"South Shore",lat:32.2410,lng:-64.8345,setting:"beachfront",drive:45,fine:true,cuisine:"Island contemporary",meal:"both",price:"$$$$",rating:4.1,reviews:264,src:"TripAdvisor",
+short:"White-linen dining between pink sand and dramatic cliffs — one of the only restaurants in Bermuda actually on the beach. Magical at sunset.",
+desc:"Coconuts is open-air, toes-in-the-sand dining on The Reefs' private cove beach, long considered Bermuda's most romantic table — white linen between pink sand and dramatic limestone cliffs, magical at sunset. The Caribbean-inspired fine-dining menu stars fresh-caught local fish, prime cuts, conch, octopus and the signature Bermuda fish chowder. It's the pick for Diane's birthday night: call ahead and mention the occasion, ask for a sunset seating, and let the setting do the rest. Seasonal (roughly April–October) and weather-dependent, so reservations are essential.",
+fun:"One of the very few restaurants in Bermuda located directly on a beach — most 'beachfront' dining sits above the sand; here your toes are in it.",status:"Seasonal (Apr–Oct) · weather dependent",
+imgs:["https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-header-1-658082162bf58.jpg","https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-coconutsthereefsbermuda-beachfrontromance-65ae8196b59ad.jpg","https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-dine-coconuts-beachbbq-65b2869404acb.jpg","https://symphony.cdn.tambourine.com/the-reefs-redesign/media/reefsresort-ourresort-header-6543f0af2ae11.jpg"],
+menus:[{l:"Menus & info",u:"https://www.thereefs.com/beachfront-bermuda-restaurants/coconuts-the-reefs-bermuda"}],
+phone:"+1 441-238-0222",email:"generalinfo@thereefs.bm",web:"https://www.thereefs.com/beachfront-bermuda-restaurants/coconuts-the-reefs-bermuda",resP:"opentable",resU:"https://www.opentable.com/restref/client/?rid=1294549&restref=1294549",hours:"Lunch 12–5pm · Dinner 6–10pm daily (seasonal)"},
+
+{id:"solaris",name:"Solaris at The Reefs",area:"Southampton · The Reefs Resort, 56 South Shore Rd",region:"South Shore",lat:32.2412,lng:-64.8340,setting:"waterfront",drive:45,fine:true,cuisine:"Island contemporary",meal:"dinner",price:"$$$$",rating:4.8,reviews:59,src:"OpenTable",
+short:"The Reefs' clifftop fine-dining room (new in 2025) — curved floor-to-ceiling ocean windows and an island-global menu.",
+desc:"Set atop rugged limestone cliffs above The Reefs' secluded pink-sand cove, Solaris (which replaced Aqua Terra in May 2025) frames the Atlantic through a stunning curved wall of floor-to-ceiling windows, with an expansive covered terrace and a lounge built around the resort's original cedar bar. Costa Rican-born Executive Chef Carlos Meléndez cooks island flavors with global polish: Bermuda fish chowder, lobster catalana, grilled octopus, lobster ravioli in vanilla-vermouth sauce and dry-aged steaks. Open for dinner nightly and a lavish Sunday brunch, with live music in the lounge through summer — the weatherproof, year-round counterpart to Coconuts below.",
+fun:"The new lounge is built around The Reefs' original cedar bar, preserved through the 2025 renovation.",status:"",
+imgs:["https://symphony.cdn.tambourine.com/the-reefs-redesign/media/reefs-solaris-intro-image-682f3c243e46e.webp","https://symphony.cdn.tambourine.com/the-reefs-redesign/media/thereefsresortandclub-aquaterra-header-65b039438f50d.webp","https://symphony.cdn.tambourine.com/the-reefs-redesign/media/reefs-homepage-dining-image-682f3cacc711a.jpg"],
+menus:[{l:"Menus & info",u:"https://www.thereefs.com/beachfront-bermuda-restaurants/solaris"}],
+phone:"+1 441-238-0222",email:"generalinfo@thereefs.bm",web:"https://www.thereefs.com/beachfront-bermuda-restaurants/solaris",resP:"opentable",resU:"https://www.opentable.com/r/solaris-the-reefs-southhampton",hours:"Breakfast 8–10:30am · Dinner 6–10pm daily · Sunday brunch 12–3pm"},
+
+{id:"waterlot",name:"The Waterlot Inn",area:"Southampton · Jews Bay, Fairmont Southampton",region:"South Shore",lat:32.2578,lng:-64.8285,setting:"waterfront",drive:40,fine:true,cuisine:"Steakhouse",meal:"dinner",price:"$$$$",rating:4.7,reviews:991,src:"OpenTable",
+short:"Bermuda's legendary 350-year-old dockside steakhouse on Jews Bay — reopened December 2025 after a head-to-toe renovation.",
+desc:"Bermuda's legendary steakhouse has anchored the shores of Jews Bay since 1670, and after a head-to-toe renovation it reopened in December 2025 — reimagined but every bit the island institution. Inside the whitewashed inn, candlelit rooms blend timeless elegance with contemporary charm, and the menu offers the widest range of steaks on the island, including cuts dry-aged on premise, alongside signatures like the table-side Waterlot Caesar, Bermuda chowder tortellini and a surf & turf with vanilla-poached Bermuda lobster. The award-winning wine cellar is among Bermuda's best. Dress code is 'Island Chic.' A serious contender for the most memorable dinner of your trip. Closed Mon–Tue.",
+fun:"The Waterlot has operated since 1670 — and you can arrive by boat, tying up at the restaurant's private dock on Jews Bay.",status:"Closed Mon & Tue",
+imgs:["https://images.squarespace-cdn.com/content/v1/6712c464739f8d3dc1a8d610/32678260-cfb4-490e-a471-3b4b6dd8dffc/Waterlot+%28Food%29-59.jpg","https://images.squarespace-cdn.com/content/v1/6712c464739f8d3dc1a8d610/7095c20f-965e-4fb0-bc08-b900e75af383/Waterlot+%28Food%29-38.jpg","https://images.squarespace-cdn.com/content/v1/6712c464739f8d3dc1a8d610/22a66b69-3d43-445c-bd02-09a04ac4d0c6/Waterlot+%28Food%29-78.jpg","https://images.squarespace-cdn.com/content/v1/6712c464739f8d3dc1a8d610/1ee377df-7619-46e0-87e7-a898ce9e6ec6/Waterlot+%28Food%29-45.jpg","https://images.squarespace-cdn.com/content/v1/6712c464739f8d3dc1a8d610/a8b13184-0e9f-4dff-b3e9-f2f404e89479/Waterlot+%28Food%29-26.jpg"],
+menus:[{l:"Dinner",u:"https://www.thewaterlot.bm/s/The-Waterlot-Dinner-Menu-2026.pdf"},{l:"Dessert",u:"https://www.thewaterlot.bm/s/The-Waterlot-Dessert-Menu-2026.pdf"},{l:"Cocktails",u:"https://www.thewaterlot.bm/s/The-Waterlot_Cocktail-List_Winter-2025.pdf"},{l:"Wine",u:"https://www.thewaterlot.bm/s/The-Waterlot_Wine-List_Winter-2025.pdf"}],
+phone:"+1 441-238-6136",email:"shp.restaurants@fairmont.com",web:"https://www.thewaterlot.bm",resP:"opentable",resU:"https://www.opentable.com/r/the-waterlot-fairmont-southampton",hours:"Dinner Wed–Sun 6–10pm · closed Mon & Tue"},
+
+{id:"dock",name:"The Dock at The Waterlot",area:"Southampton · Jews Bay, behind the Waterlot Inn",region:"South Shore",lat:32.2582,lng:-64.8290,setting:"waterfront",drive:40,fine:false,cuisine:"Cocktails & bites",meal:"dinner",price:"$$",rating:4.4,reviews:93,src:"TripAdvisor",
+short:"Seasonal open-air sunset bar on the Waterlot's actual dock — cocktails, grilled bites and live music over Jews Bay.",
+desc:"When open, this seasonal open-air lounge on The Waterlot's dock is one of Bermuda's dreamiest sunset perches: contemporary loungers arranged like a dockside living room over sparkling Jews Bay, craft cocktails built around local rums, and shareable bites like lobster sliders straight off the outdoor grill, with live music many evenings. Historically it ran summer evenings only, roughly Thursday–Sunday 5–10pm. Status note: as of June 2026 the official page still reads 'closed for the season' with summer dates unannounced following the Fairmont relaunch — call before planning an evening here.",
+fun:"The Dock's infamous 'Ridiculous Bloody Mary' was a $99 fishbowl-sized drink garnished with jumbo shrimp, a slider and a slab of prime rib.",status:"2026 season dates unannounced — call to confirm before visiting",
+imgs:["https://m.ahstatic.com/is/image/accorhotels/TEMP_ASSET_HCM_P_4056513:3by2?fmt=jpg&wid=1024"],
+menus:[],
+phone:"+1 441-238-8000",email:"southampton@fairmont.com",web:"https://www.fairmont.com/en/hotels/bermuda/fairmont-southampton/dining/the-dock-at-the-waterlot.restaurant.html",resP:"phone",resU:"",hours:"Summer-seasonal · historically Thu–Sun ~5–10pm"},
+
+{id:"henry",name:"Henry VIII",area:"Southampton · 69 South Shore Rd",region:"South Shore",lat:32.2467,lng:-64.8372,setting:"waterview",drive:42,fine:false,cuisine:"Pub fare",meal:"both",price:"$$$",rating:4.0,reviews:738,src:"TripAdvisor",
+short:"Beloved 40-year South Shore landmark — English pub, sushi bar and ocean-view terrace near Horseshoe Bay, with live music.",
+desc:"A South Shore institution for more than 40 years, Henry VIII is three experiences under one roof: a classic oak-paneled English pub, a modern sushi bar, and a sweeping terrace looking out to the south shore ocean — especially spectacular at sunset. The menu runs from bangers and mash and fish & chips to some of the island's best-regarded sushi, with daily specials built around the catch from trusted local fishermen. The famous Bermuda fish chowder recipe has been secret for four decades. Live entertainment several nights a week and Bermuda's most popular Sunday brunch. Five minutes from Horseshoe Bay.",
+fun:"Henry's fish chowder recipe has been a closely guarded secret for more than 40 years — no amount of begging gets the chef to reveal it.",status:"",
+imgs:["https://static.wixstatic.com/media/df0331_7d33ea86560145d8b4fecd55fd779cdf~mv2.jpg/v1/fit/w_1920,h_1104,q_90/df0331_7d33ea86560145d8b4fecd55fd779cdf~mv2.jpg","https://static.wixstatic.com/media/df0331_287751e120714cfd9393a46fb32f26bc~mv2.jpg/v1/fit/w_1920,h_1104,q_90/df0331_287751e120714cfd9393a46fb32f26bc~mv2.jpg","https://static.wixstatic.com/media/df0331_498511bb92654021adbf43cbad2ebeb9~mv2.jpg/v1/fit/w_1920,h_1104,q_90/df0331_498511bb92654021adbf43cbad2ebeb9~mv2.jpg","https://static.wixstatic.com/media/df0331_14c25cf4b58e44fba0072c8c5b8f8b7c~mv2.jpg/v1/fit/w_1600,h_920,q_90/df0331_14c25cf4b58e44fba0072c8c5b8f8b7c~mv2.jpg"],
+menus:[{l:"Lunch",u:"https://www.henrys.bm/_files/ugd/0542a4_0a39a95da59f484ea4dfb018e339d61e.pdf"},{l:"All Day",u:"https://www.henrys.bm/_files/ugd/0542a4_992bd20621434280b2cc6f9d2bdec288.pdf"},{l:"Sushi",u:"https://www.henrys.bm/_files/ugd/0542a4_bebb8a0e9caa4af5b2981294bc7dbb45.pdf"},{l:"Sunday Brunch",u:"https://www.henrys.bm/_files/ugd/0542a4_d8576296831d4fca9df2d64430b069df.pdf"}],
+phone:"+1 441-238-1977",email:"",web:"https://www.henrys.bm",resP:"web",resU:"https://www.henrys.bm/reservations",hours:"Open daily · lunch, all-day dining & dinner · Sunday brunch"},
+
+{id:"gulfstream",name:"Gulfstream",area:"Southampton · opposite Horseshoe Bay",region:"South Shore",lat:32.2498,lng:-64.8213,setting:"waterview",drive:43,fine:false,cuisine:"Seafood",meal:"both",price:"$$$",rating:4.3,reviews:332,src:"TripAdvisor",
+short:"Seafood, sushi and Italian favorites directly across from Horseshoe Bay — live lobster and oyster tanks, from the Rustico family.",
+desc:"Directly opposite the entrance to Horseshoe Bay — Bermuda's most famous pink-sand beach — Gulfstream is the South Shore's go-to for ultra-fresh seafood with a Mediterranean-Italian soul. Live tanks hold oysters, clams and lobster (local spiny lobster in season, Maine lobster otherwise), and a dedicated sushi bar turns the day's local catch into sushi and sashimi. The menu ranges wide: aged steaks, pizzas, panini and international dishes from the same family team behind Rustico in Flatts. The breezy dining room and terrace fill with sun-kissed beachgoers at lunch and turn relaxed-romantic by night — the natural dinner stop after a Horseshoe Bay beach day.",
+fun:"Gulfstream keeps live tanks for oysters, clams and lobster — serving Bermuda's local spiny lobster in season and Maine lobster the rest of the year.",status:"",
+imgs:["https://static.wixstatic.com/media/654292_da191302f29741e38cd747707d8ebc22.jpg/v1/fill/w_1200,h_800,al_c,q_85/654292_da191302f29741e38cd747707d8ebc22.jpg","https://static.wixstatic.com/media/654292_16bb98bafe3b4745937745a56cb56a9c.jpg/v1/fill/w_1200,h_540,al_c,q_85/654292_16bb98bafe3b4745937745a56cb56a9c.jpg","https://static.wixstatic.com/media/654292_71074dfff00348f6a6ce10171d9d9206.jpg/v1/fill/w_1200,h_795,al_c,q_85/654292_71074dfff00348f6a6ce10171d9d9206.jpg","https://static.wixstatic.com/media/654292_cead966e66754cd8bd24f989735d6403.jpg/v1/fill/w_1200,h_800,al_c,q_85/654292_cead966e66754cd8bd24f989735d6403.jpg"],
+menus:[{l:"Menu",u:"https://www.bermuda-dining.com/dinner-menu-j6oj4"},{l:"Sushi",u:"https://www.bermuda-dining.com/sushi-menu"},{l:"Wine",u:"https://www.bermuda-dining.com/wine-list-qij4i"}],
+phone:"+1 441-238-1897",email:"gulfstream@bermuda-dining.com",web:"https://www.bermuda-dining.com/gulfstream",resP:"phone",resU:"",hours:"Daily · lunch ~11:45am–2:30pm & dinner 5–10pm (continuous Fri–Sun and in summer)"},
+
+{id:"surf",name:"SURF at Azura",area:"Warwick · 90 South Shore Rd, Azura Bermuda",region:"South Shore",lat:32.2540,lng:-64.7927,setting:"waterfront",drive:35,fine:true,cuisine:"Mediterranean",meal:"both",price:"$$$",rating:4.5,reviews:36,src:"OpenTable",
+short:"Clifftop seafood-forward stunner at boutique Azura — enter via spiral staircase to ocean-view terraces and live music at sunset.",
+desc:"Azura's clifftop restaurant takes its name from the beloved Surf Side Beach Club that occupied this Warwick stretch of South Shore for decades. Guests descend a spiral staircase into a seaside-chic dining room and terrace suspended above the Atlantic, where Chef Douglas Sisk's island-Mediterranean, seafood-forward menu stars crab-stuffed Maine lobster with caviar beurre blanc, charred octopus, Bermuda fish chowder fritters and Moroccan lamb meatballs. Open daily for breakfast, lunch and dinner, with acoustic live music Wednesdays, Fridays and Saturdays through summer. Dramatic ocean panoramas from one of the island's most polished new kitchens.",
+fun:"You enter the restaurant down a spiral staircase — and it's named for the old Surf Side Beach Club that once stood on this exact stretch of coast.",status:"",
+imgs:["https://images.squarespace-cdn.com/content/v1/66fb353aa6599842ed558026/a412cfdb-e70e-450a-9ee4-0ecc078156b3/_TA_6883.jpg","https://images.squarespace-cdn.com/content/v1/66fb353aa6599842ed558026/17d3e679-c507-49b4-8061-fe04814d8bb7/Bermuda+Fish+Chowder+Fritters.jpg","https://images.squarespace-cdn.com/content/v1/66fb353aa6599842ed558026/b809e71c-4e17-49e9-8e83-6323e7ce2868/Roasted+Beet+Bowl_.jpg"],
+menus:[{l:"Main Menu 2026",u:"https://www.surfbda.com/s/SURF-Menu-2026.pdf"},{l:"Breakfast",u:"https://www.surfbda.com/s/Breakfast-Menu.pdf"},{l:"Cocktails & Wine",u:"https://www.surfbda.com/s/SURF-Cocktails-Wine-List.pdf"}],
+phone:"+1 441-232-9000",email:"reservations@azurabermuda.com",web:"https://www.surfbda.com",resP:"opentable",resU:"https://www.opentable.com/r/surf-warwick",hours:"Daily · breakfast 7–10:30am · lunch 11am–4:30pm · dinner 5–9pm"},
+
+{id:"cedar",name:"Cedar Room at Pompano",area:"Southampton · 36 Pompano Beach Rd",region:"South Shore",lat:32.2557,lng:-64.8728,setting:"waterfront",drive:50,fine:true,cuisine:"International",meal:"dinner",price:"$$$$",rating:4.1,reviews:54,src:"TripAdvisor",
+short:"Oceanfront dining room paneled in real Bermuda cedar at the family-run Pompano Beach Club — nightly-changing menu, epic sunsets.",
+desc:"The signature restaurant of the Lamb family's Pompano Beach Club — family-owned since 1956 — the Cedar Room takes its name from the genuine Bermuda cedar beams, window frames and wall panels warming the dining room. Perched on Bermuda's southwest coast, virtually every table enjoys a sweeping ocean view, with year-round alfresco dining above the famous waist-deep sandbar that glows turquoise at dusk. One of very few restaurants on the island serving a multi-course dinner whose menu changes nightly, emphasizing premium meats and local seafood. Pair dinner with a cocktail in the adjacent Sunset Lounge, which claims the best sunset view in Bermuda. Outside guests by reservation — call ahead.",
+fun:"The room is paneled in real Bermuda cedar — a precious native wood nearly wiped out by blight in the 1940s.",status:"Outside guests by phone reservation only",
+imgs:["https://image-tc.galaxy.tf/wijpeg-3bdht2gpm33o20vazdmm91c1q/pompano-sunset-oct-2022-orig_standard.jpg","https://image-tc.galaxy.tf/wijpeg-esmx9oycvv2uvh6iq8rysm2rc/ariel-view-of-pompano-1-orig_standard.jpg","https://image-tc.galaxy.tf/wijpeg-1218jiowz8r8y6z1x1o5h6mg5/ocean-grill-photo-july-2019-orig_standard.jpg"],
+menus:[{l:"Sample Dinner",u:"https://document-tc.galaxy.tf/wdpdf-b8lpneyflx5cyk7wqlfhl2qz7/sample-dinner-menu-1-pg-1.pdf"},{l:"Sample Dinner pg 2",u:"https://document-tc.galaxy.tf/wdpdf-def8q5dnzhn8tzkdobxsa95tv/sample-dinner-menu-1-pg-2.pdf"}],
+phone:"+1 441-234-0222",email:"",web:"https://www.pompanobeachclub.com/dining/cedar-room-restaurant",resP:"phone",resU:"",hours:"Dinner nightly ~6:30–9pm · menu changes nightly"},
+
+{id:"breezes",name:"Breezes",area:"Sandys · Cambridge Beaches Resort, Long Bay",region:"West End & Dockyard",lat:32.3088,lng:-64.8689,setting:"beachfront",drive:55,fine:false,cuisine:"Island contemporary",meal:"both",price:"$$$",rating:4.4,reviews:294,src:"TripAdvisor",
+short:"Cambridge Beaches' beloved open-air beach restaurant over Long Bay — Caribbean-coastal menu and the West End's best sunset tables.",
+desc:"Breezes is Cambridge Beaches' open-air, toes-in-the-sand restaurant perched above Long Bay on the resort's private 23-acre peninsula, widely recognized as Bermuda's favourite alfresco dining spot. The menu leans Caribbean-coastal — escovitch jerk mussels, crispy snapper with creole shrimp, a blackened Bermuda fish sandwich on raisin bread — backed by a serious swizzle-and-spritz cocktail list. Tables sit under string lights and palms with what many call the best sunset view on the island; longtails, herons and even sea turtles are regularly spotted from the terrace. Open to non-guests; dinner is seasonal and books up fast in July. No dinner Tuesdays.",
+fun:"Regulars time sunset cocktails to spot longtail birds and sea turtles right from their table.",status:"Seasonal · no dinner Tuesdays",
+imgs:["https://www.cambridgebeaches.com/site/assets/files/10552/bg.jpg","https://www.cambridgebeaches.com/site/assets/files/134210/breezes_at_cambridge_beaches-1.820x540.jpg","https://www.cambridgebeaches.com/site/assets/files/11579/breezes_small_2.2000x0.jpg","https://www.cambridgebeaches.com/site/assets/files/134210/oceanfront_restaurants_in_bermuda.jpg"],
+menus:[{l:"Menus & info",u:"https://www.cambridgebeaches.com/dining/breezes/"}],
+phone:"+1 441-234-0331",email:"restaurantreservations@cambridgebeaches.com",web:"https://www.cambridgebeaches.com/dining/breezes/",resP:"opentable",resU:"https://www.opentable.com/r/breezes-restaurant-reservations-sandys",hours:"Lunch 12–3pm daily · Dinner 6:30–9:30pm (no dinner Tue) · seasonal"},
+
+{id:"sunken",name:"Sunken Harbor Club",area:"Sandys · Cambridge Beaches Resort, Mangrove Bay",region:"West End & Dockyard",lat:32.3078,lng:-64.8683,setting:"waterfront",drive:55,fine:true,cuisine:"Bermudian",meal:"dinner",price:"$$$",rating:4.7,reviews:130,src:"OpenTable",
+short:"Brooklyn's cult tropical cocktail bar gone Bermudian — a dockside tavern with shipwreck-inspired tasting menus over Mangrove Bay.",
+desc:"The Bermuda chapter of Brooklyn's cult tropical cocktail bar operates as a dockside tavern at Cambridge Beaches, overlooking the boats of Mangrove Bay. Executive Chef James Wambui's adventurous menu honors Bermuda's culinary heritage — jerk Iberico pork belly, miso black cod, butter-poached Maine lobster — alongside a 'Culinary Voyage' omakase inspired by the 1818 shipwreck of the brig Caesar. The real draw is the drink list, organized by ocean depth from 'Island Classics' down to 'The Abyss' (limit two per person), including the award-winning White Zombie. Dark nautical-tiki interiors open onto a sunset-facing waterfront terrace. Dinner reservations required.",
+fun:"The Angostura Colada — now served in bars worldwide — was invented at Sunken Harbor Club.",status:"",
+imgs:["https://www.cambridgebeaches.com/site/assets/files/11577/pmc_4925.jpg","https://www.cambridgebeaches.com/site/assets/files/13054/pmc_4849.2000x500.jpg","https://www.cambridgebeaches.com/site/assets/files/13055/pmc_4771.2000x500.jpg","https://www.cambridgebeaches.com/site/assets/files/11146/pmc_48921-1658762539217.2000x0.jpg"],
+menus:[{l:"Menus & info",u:"https://www.cambridgebeaches.com/dining/sunken-harbor/"}],
+phone:"+1 441-234-0331",email:"restaurantreservations@cambridgebeaches.com",web:"https://www.cambridgebeaches.com/dining/sunken-harbor/",resP:"opentable",resU:"https://www.opentable.com/r/sunken-harbour-reservations-sandys",hours:"Dinner daily 6–9pm · bar till midnight Fri–Sun"},
+
+{id:"woodys",name:"Woody's",area:"Sandys · 1 Malabar Rd, Boaz Island",region:"West End & Dockyard",lat:32.3081,lng:-64.8548,setting:"waterview",drive:58,fine:false,cuisine:"Bermudian",meal:"lunch",price:"$",rating:4.6,reviews:331,src:"Google",
+short:"Legendary roadside fish-sandwich joint on Boaz Island — fried wahoo on raisin bread with a Mangrove Bay view.",
+desc:"A no-frills West End institution on Boaz Island between Somerset and Dockyard, Woody's is where locals, fishermen and in-the-know visitors pull up for what's long been hailed as Bermuda's best fish sandwich — crisp fried snapper, grouper or wahoo on raisin bread with coleslaw and tartar sauce, eaten at picnic tables overlooking Mangrove Bay across the road. The chalkboard menu changes with the day's catch and runs to jerk chicken, shrimp and cold beers, with games on the sports-bar TVs inside. Relaunched under new operators in 2025 after a change of management — call ahead. Cash-friendly, casual and very Bermudian.",
+fun:"The daily menu is written up based on whatever the fishermen bring in that morning.",status:"Relaunched 2025 under new operators — call ahead",
+imgs:["https://dockyard.bm/wp-content/uploads/2025/07/Dockyard-Shop-26.png"],
+menus:[{l:"Menu (menus.bm)",u:"https://menus.bm/listing/woodys/"}],
+phone:"+1 441-234-2082",email:"",web:"https://dockyard.bm/places/the-new-woodys-drive-inn/",resP:"none",resU:"",hours:"Daily 11:30am–7pm (bar often later)"},
+
+{id:"bonefish",name:"Bone Fish Bar & Grill",area:"Royal Naval Dockyard · 6 Dockyard Terrace",region:"West End & Dockyard",lat:32.3269,lng:-64.8334,setting:"waterfront",drive:60,fine:false,cuisine:"Seafood",meal:"both",price:"$$$",rating:4.1,reviews:463,src:"Google",
+short:"Dockyard's big, buzzy seafood bar-and-grill at the cruise pier — fish chowder, pizza and live music on a harbour-view deck.",
+desc:"Step off the ferry at Royal Naval Dockyard and you're practically on Bone Fish's sprawling outdoor deck. The busiest bar-restaurant in Dockyard specializes in local seafood with Italian leanings — Bermuda fish chowder laced with black rum, fish and chips, cioppino, pizzas and house-made pastas, rib-eyes, and a snapper fish sandwich on thick-cut raisin bread. Frequent live local entertainment, a long frozen-drink list and harbour-side seating with views of the marina. Loud, friendly and convenient — the classic first-and-last stop for a Dockyard day, and an easy lunch if you ferry over from Hamilton.",
+fun:"It sits so close to the cruise berths you can walk from a ship's gangway to a Dark 'n' Stormy on the deck in about two minutes.",status:"",
+imgs:["https://img1.wsimg.com/isteam/ip/e2dc0a56-9073-423f-a439-0a081078515c/2996.jpg","https://dockyard.bm/wp-content/uploads/2025/07/website-8-x-6-in-22-768x576.png","https://img1.wsimg.com/isteam/ip/e2dc0a56-9073-423f-a439-0a081078515c/Bonefish.jpg"],
+menus:[{l:"Summer 2026 Menu",u:"https://img1.wsimg.com/blobby/go/e2dc0a56-9073-423f-a439-0a081078515c/Bonefish%20Menus%20Summer%202026.pdf"},{l:"Drinks & Late Night",u:"https://img1.wsimg.com/blobby/go/e2dc0a56-9073-423f-a439-0a081078515c/Bonefish%20Late%20Night%20%20Drinks%20New%20Menu.pdf"}],
+phone:"+1 441-234-5151",email:"bonefish@transact.bm",web:"https://bonefishgroupbermuda.com",resP:"phone",resU:"",hours:"Apr–Oct daily 11:30am–midnight"},
+
+{id:"anchor",name:"The Anchor",area:"Royal Naval Dockyard · 1 Freeport Rd",region:"West End & Dockyard",lat:32.3244,lng:-64.8353,setting:"waterfront",drive:60,fine:false,cuisine:"Bermudian",meal:"both",price:"$$$",rating:4.5,reviews:276,src:"Google",
+short:"Local-feeling restaurant, sushi bar and lounge just inside the Dockyard gates — famous wahoo fish sandwich and karaoke nights.",
+desc:"Just inside the Dockyard gates, The Anchor is where Royal Naval Dockyard keeps its local soul — a relaxed restaurant, bar and lounge preserving traditional Bermudian cuisine. By day it's fast-casual breakfast and lunch; by night it shifts to semi-fine dining with a surprisingly good sushi bar (Chef Marco's rolls draw raves), Bermuda fish chowder with black rum and sherry peppers, Thai red curry and a celebrated wahoo fish sandwich on toasted raisin bread. The vibe stays genuinely local despite the cruise crowds, helped by karaoke nights and Reggae Bingo. Reliable and fairly priced for a Dockyard day.",
+fun:"Despite sitting in Bermuda's biggest tourist hub, it doubles as a genuine locals' hangout — Reggae Bingo packs the lounge with islanders.",status:"",
+imgs:["https://anchorbermuda.com/wp-content/uploads/2023/10/20231008-Anchor-7582.jpg","https://anchorbermuda.com/wp-content/uploads/2023/10/20231008-Anchor-7550.jpg","https://anchorbermuda.com/wp-content/uploads/2023/10/20231008-Anchor-1270.jpg"],
+menus:[{l:"Lunch",u:"https://anchorbermuda.com/lunch/"},{l:"Dinner",u:"https://anchorbermuda.com/menu-dinner/"},{l:"Sushi",u:"https://anchorbermuda.com/menu-sushi/"}],
+phone:"+1 441-543-9361",email:"anchorrbl@gmail.com",web:"https://anchorbermuda.com",resP:"web",resU:"https://anchorbermuda.com/contacts/",hours:"Daily 11am–10pm, year-round"},
+
+{id:"calico",name:"Calico Jack's",area:"Royal Naval Dockyard · Heritage Wharf",region:"West End & Dockyard",lat:32.3272,lng:-64.8308,setting:"waterfront",drive:60,fine:false,cuisine:"Cocktails & bites",meal:"lunch",price:"$",rating:4.5,reviews:149,src:"TripAdvisor",
+short:"Bermuda's only floating bar — a 75-foot pirate ship moored in Dockyard with rum swizzles and a plank you can actually jump off.",
+desc:"Bermuda's only floating bar is 75 feet of pure pirate glory — an intricately wood-worked pirate ship docked on the back side of Heritage Wharf, with two bars, surround sound and what the crew calls an unlimited supply of rum. This is a drinks-and-mayhem stop rather than a restaurant: order a Dark 'n' Stormy or rum swizzle, claim a spot on deck, then walk the plank into the turquoise harbour or lounge on the floats and aqua trampoline alongside. The crowd is a happy mix of cruise passengers and locals, and the atmosphere is unapologetically rowdy by afternoon. Seasonal, April through October.",
+fun:"For the price of a drink you can spend the afternoon leaping off the plank into the harbour.",status:"Bar only — limited food · seasonal Apr–Oct",
+imgs:["https://dockyard.bm/wp-content/uploads/2025/07/website-8-x-6-in-53-1-768x576.png","https://dockyard.bm/wp-content/uploads/2025/06/website-8-x-6-in-20-1536x1152.png","https://dockyard.bm/wp-content/uploads/2025/06/website-8-x-6-in-19-1536x1152.png"],
+menus:[],
+phone:"+1 441-504-5225",email:"info@calicojacksbermuda.com",web:"https://dockyard.bm/places/calico-jacks-floating-bar/",resP:"none",resU:"",hours:"Apr–Oct daily 10am–10pm, weather dependent"},
+
+{id:"hammerheads",name:"Hammerheads Bar & Grill",area:"Royal Naval Dockyard · Snorkel Park Beach",region:"West End & Dockyard",lat:32.3292,lng:-64.8346,setting:"beachfront",drive:60,fine:false,cuisine:"Beach bar",meal:"lunch",price:"$$",rating:4.7,reviews:376,src:"TripAdvisor",
+short:"Beach-shack dining on Dockyard's private white-sand Snorkel Park — wahoo, jerk quesadillas and frozen 'Shark Oil' cocktails.",
+desc:"Tucked beneath the historic fortified walls of Dockyard's Keep, Snorkel Park is a private white-sand beach club, and Hammerheads is its big terrace bar and grill. The kitchen turns out local and American beach food — fresh Bermuda wahoo any way you like, jerk chicken quesadillas, BBQ and shrimp-topped salads — while the bar blends frozen swizzles and the house 'Shark Oil' cocktail. Days mean cabanas, kayaks and snorkeling straight off the sand; select summer nights the beach flips into Bermuda's liveliest open-air nightclub with DJs and fire dancers. The only spot in Dockyard where you eat with your feet literally in the sand.",
+fun:"The beach sits inside the 19th-century fortifications of the Royal Naval Dockyard's Keep — and after dark it becomes Bermuda's hottest open-air nightclub.",status:"Seasonal · daytime ~9am–5pm",
+imgs:["https://dockyard.bm/wp-content/uploads/2024/07/DSCN3708-Edited-scaled.jpg","https://dockyard.bm/wp-content/uploads/2024/07/DSCN3719-Edited-scaled.jpg"],
+menus:[],
+phone:"+1 441-234-6989",email:"",web:"https://dockyard.bm/snorkel-park-beach/",resP:"none",resU:"",hours:"Seasonal (May–Oct) · ~9am–5pm daily · event nights later"}
+];
+/* ================= STATE ================= */
+const LSF="bermuda_favs", LSN="bermuda_notes";
+let favs = JSON.parse(localStorage.getItem(LSF)||"[]");
+let notes = JSON.parse(localStorage.getItem(LSN)||"{}");
+const byId = id => R.find(r=>r.id===id);
+const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function saveFavs(){localStorage.setItem(LSF,JSON.stringify(favs));updateFavCount();}
+function saveNotes(){localStorage.setItem(LSN,JSON.stringify(notes));}
+function isFav(id){return favs.includes(id);}
+function toggleFav(id){
+  if(isFav(id)) favs = favs.filter(f=>f!==id); else favs.push(id);
+  saveFavs();
+  document.querySelectorAll('[data-favbtn="'+id+'"]').forEach(b=>renderFavBtn(b,id));
+  refreshMarker(id);
+  if(document.getElementById("page-favs").classList.contains("active")) renderFavs();
+  if(document.getElementById("fFavs") && document.getElementById("fFavs").classList.contains("on")) applyFilters();
+}
+function renderFavBtn(btn,id){
+  const on = isFav(id);
+  btn.className = "favbtn"+(on?" on":"");
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="'+(on?'#fff':'none')+'" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'+(on?"Saved":"Save");
+}
+function favBtnHtml(id){return '<button class="favbtn" data-favbtn="'+id+'" onclick="toggleFav(\''+id+'\')"></button>';}
+function hydrateFavBtns(scope){(scope||document).querySelectorAll("[data-favbtn]").forEach(b=>renderFavBtn(b,b.dataset.favbtn));}
+function updateFavCount(){
+  const el=document.getElementById("favCount");
+  el.textContent=favs.length; el.style.display=favs.length?"inline-block":"none";
 }
 
-// ── Gallery ──────────────────────────────────────────
-const G={};
-function initGallery(id,count){
-  const wrap=document.getElementById('gw-'+id);
-  const track=document.getElementById('gt-'+id);
-  const dots=document.getElementById('gd-'+id);
-  for(let i=0;i<count;i++){
-    const d=document.createElement('div');
-    d.className='dot'+(i===0?' on':'');
-    dots.appendChild(d);
+/* notes */
+function notesBoxHtml(id,open){
+  const v = notes[id]||"";
+  return '<div class="notesbox'+(open||v?" open":"")+'" id="nb-'+id+'-'+Math.random().toString(36).slice(2,7)+'" data-nb="'+id+'">'+
+    '<textarea placeholder="Add a note — e.g. \'Mom wants the lobster here\'" oninput="noteInput(this,\''+id+'\')">'+esc(v)+'</textarea>'+
+    '<div class="nb-foot"><span>visible only on this device</span><span class="saved-flash">Saved ✓</span></div></div>';
+}
+let noteTimers={};
+function noteInput(ta,id){
+  notes[id]=ta.value;
+  clearTimeout(noteTimers[id]);
+  noteTimers[id]=setTimeout(()=>{
+    if(!notes[id].trim()) delete notes[id];
+    saveNotes();
+    document.querySelectorAll('[data-nb="'+id+'"] textarea').forEach(o=>{if(o!==ta&&o.value!==ta.value)o.value=ta.value;});
+    document.querySelectorAll('[data-notetoggle="'+id+'"]').forEach(t=>t.classList.toggle("has",!!notes[id]));
+    const f=ta.parentElement.querySelector(".saved-flash");
+    if(f){f.classList.add("show");setTimeout(()=>f.classList.remove("show"),1200);}
+  },500);
+}
+function toggleNotes(btn,id){
+  const card=btn.closest(".card-body,.modal-body,.detail-card,.fav-body");
+  const nb=card&&card.querySelector('[data-nb="'+id+'"]');
+  if(nb) nb.classList.toggle("open");
+}
+function noteToggleHtml(id){
+  return '<button class="notes-toggle'+(notes[id]?" has":"")+'" data-notetoggle="'+id+'" onclick="toggleNotes(this,\''+id+'\')">✎ Notes</button>';
+}
+
+/* ================= NAV / ROUTING ================= */
+let map=null, markers={};
+function go(page,id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("on",b.dataset.nav===page));
+  closeModal();
+  if(page==="detail"){renderDetail(id);document.getElementById("page-detail").classList.add("active");}
+  else document.getElementById("page-"+page).classList.add("active");
+  if(page==="favs") renderFavs();
+  if(page==="recs") renderRecs();
+  window.scrollTo(0,0);
+  if(page==="home"&&map) setTimeout(()=>map.invalidateSize(),50);
+  location.hash = page==="detail" ? "#/r/"+id : "#/"+page;
+}
+window.addEventListener("hashchange",()=>{routeFromHash();});
+function routeFromHash(){
+  const h=location.hash;
+  if(h.startsWith("#/r/")){const id=h.slice(4);if(byId(id)&&!document.getElementById("page-detail").classList.contains("active"))go("detail",id);}
+  else if(h==="#/recs"&&!document.getElementById("page-recs").classList.contains("active"))go("recs");
+  else if(h==="#/favs"&&!document.getElementById("page-favs").classList.contains("active"))go("favs");
+}
+
+/* ================= FILTERS ================= */
+function toggleChip(el){el.classList.toggle("on");applyFilters();}
+function activeChips(groupId){return [...document.querySelectorAll("#"+groupId+" .chip.on")].map(c=>c.dataset.v);}
+function resetFilters(){
+  ["fRegion","fCuisine","fRating","fDrive"].forEach(i=>document.getElementById(i).value="");
+  document.querySelectorAll(".filterbar .chip.on").forEach(c=>c.classList.remove("on"));
+  applyFilters();
+}
+function filtered(){
+  const region=document.getElementById("fRegion").value;
+  const cuisine=document.getElementById("fCuisine").value;
+  const rating=parseFloat(document.getElementById("fRating").value)||0;
+  const drive=parseFloat(document.getElementById("fDrive").value)||999;
+  const settings=activeChips("fSetting");
+  const meals=activeChips("fMeal");
+  const fine=document.getElementById("fFine").classList.contains("on");
+  const favOnly=document.getElementById("fFavs").classList.contains("on");
+  return R.filter(r=>{
+    if(region&&r.region!==region)return false;
+    if(cuisine&&r.cuisine!==cuisine)return false;
+    if(rating&&(!r.rating||r.rating<rating))return false;
+    if(r.drive>drive)return false;
+    if(settings.length&&!settings.includes(r.setting))return false;
+    if(meals.length&&!(meals.includes(r.meal)||r.meal==="both"))return false;
+    if(fine&&!r.fine)return false;
+    if(favOnly&&!isFav(r.id))return false;
+    return true;
+  });
+}
+function applyFilters(){
+  const list=filtered();
+  document.getElementById("resultCount").textContent=
+    list.length===R.length?"Showing all "+R.length+" restaurants":"Showing "+list.length+" of "+R.length+" restaurants";
+  renderCards(list);
+  renderMarkers(list);
+}
+
+/* ================= TAGS / SHARED HTML ================= */
+const settingLabel={beachfront:"🏖 Beachfront",waterfront:"⚓ Waterfront",waterview:"🌊 Water view",none:"🏙 In town"};
+function tagsHtml(r){
+  let t='<span class="tag setting-'+r.setting+'">'+(settingLabel[r.setting]||"")+'</span>';
+  if(r.fine)t+='<span class="tag fine">✦ Fine dining</span>';
+  t+='<span class="tag">'+r.cuisine+'</span>';
+  t+='<span class="tag">'+(r.meal==="both"?"Lunch & dinner":r.meal==="lunch"?"Lunch spot":"Dinner spot")+'</span>';
+  t+='<span class="tag">🚗 '+(r.drive===0?"On property":r.drive+" min")+'</span>';
+  t+='<span class="tag">'+r.price+'</span>';
+  return t;
+}
+function ratingHtml(r){
+  if(!r.rating)return '<span class="rating"><span class="src">unrated</span></span>';
+  return '<span class="rating"><span class="star">★</span>'+r.rating.toFixed(1)+'<span class="src">('+r.reviews+' · '+r.src+')</span></span>';
+}
+
+/* ================= CARDS ================= */
+function cardHtml(r){
+  const img=r.imgs.length
+    ?'<img class="card-img" loading="lazy" src="'+r.imgs[0]+'" alt="'+esc(r.name)+'" onclick="go(\'detail\',\''+r.id+'\')" onerror="this.outerHTML=phImg(\''+r.id+'\')">'
+    :phImg(r.id);
+  return '<div class="card">'+img+
+    '<div class="card-body">'+
+      '<div class="card-top"><h3 onclick="go(\'detail\',\''+r.id+'\')">'+r.name+'</h3>'+ratingHtml(r)+'</div>'+
+      '<div class="tags">'+tagsHtml(r)+'</div>'+
+      (r.status?'<div class="status-flag">⚠ '+r.status+'</div>':"")+
+      '<div class="card-desc">'+r.short+'</div>'+
+      notesBoxHtml(r.id)+
+      '<div class="card-actions">'+favBtnHtml(r.id)+noteToggleHtml(r.id)+
+      '<a class="detail-link" onclick="go(\'detail\',\''+r.id+'\')">Details →</a></div>'+
+    '</div></div>';
+}
+function phImg(id){
+  const r=byId(id);
+  return '<div class="card-img-ph" onclick="go(\'detail\',\''+id+'\')">'+r.name+'</div>';
+}
+function renderCards(list){
+  document.getElementById("cardGrid").innerHTML=list.map(cardHtml).join("")||
+    '<div class="empty-state" style="grid-column:1/-1"><div class="big">🔍</div><p>No restaurants match those filters.</p></div>';
+  hydrateFavBtns(document.getElementById("cardGrid"));
+}
+
+/* ================= MAP ================= */
+function pinHtml(faved){
+  return '<div class="pin'+(faved?" faved":"")+'"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M11 2a1 1 0 0 1 2 0v1.07A8 8 0 0 1 20.93 11H22a1 1 0 1 1 0 2h-1.07A8 8 0 0 1 13 20.93V22a1 1 0 1 1-2 0v-1.07A8 8 0 0 1 3.07 13H2a1 1 0 1 1 0-2h1.07A8 8 0 0 1 11 3.07V2zm1 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg></div>';
+}
+function makeIcon(faved){
+  return L.divIcon({className:"",html:pinHtml(faved),iconSize:[34,34],iconAnchor:[17,30]});
+}
+function initMap(){
+  map=L.map("map",{scrollWheelZoom:false}).setView([32.32,-64.76],11);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
+    attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:18}).addTo(map);
+  // Rosewood home marker
+  L.marker([32.3416,-64.6907],{icon:L.divIcon({className:"",html:'<div style="background:#0B3954;color:#fff;border:2.5px solid #fff;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.35)">🏨 Rosewood</div>',iconSize:[90,24],iconAnchor:[45,12]}),zIndexOffset:-100}).addTo(map);
+  renderMarkers(R);
+}
+function renderMarkers(list){
+  Object.values(markers).forEach(m=>map.removeLayer(m));markers={};
+  list.forEach(r=>{
+    const m=L.marker([r.lat,r.lng],{icon:makeIcon(isFav(r.id)),title:r.name});
+    m.on("click",()=>openModal(r.id));
+    m.addTo(map);markers[r.id]=m;
+  });
+}
+function refreshMarker(id){
+  if(markers[id])markers[id].setIcon(makeIcon(isFav(id)));
+}
+
+/* ================= SLIDESHOW ================= */
+let slideState={};
+function slidesHtml(r,key,h){
+  const n=r.imgs.length;
+  slideState[key]=0;
+  let inner;
+  if(!n) inner='<div class="slide cur"><div class="slide-ph">'+r.name+'</div></div>';
+  else inner=r.imgs.map((u,i)=>'<div class="slide'+(i===0?" cur":"")+'" data-i="'+i+'"><img loading="lazy" src="'+u+'" alt="'+esc(r.name)+' photo '+(i+1)+'" onerror="this.parentElement.innerHTML=\'<div class=slide-ph>'+esc(r.name).replace(/'/g,"")+'</div>\'"></div>').join("");
+  let nav="";
+  if(n>1){
+    nav='<button class="slide-nav prev" onclick="moveSlide(\''+key+'\',-1,event)">‹</button>'+
+        '<button class="slide-nav next" onclick="moveSlide(\''+key+'\',1,event)">›</button>'+
+        '<div class="dots">'+r.imgs.map((_,i)=>'<div class="dot'+(i===0?" cur":"")+'"></div>').join("")+'</div>';
   }
-  G[id]={cur:0,count,track,dots};
-  let sx=0,sy=0;
-  wrap.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
-  wrap.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-sx;
-    const dy=e.changedTouches[0].clientY-sy;
-    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>38) slide(id,dx<0?1:-1);
-  },{passive:true});
+  return '<div class="slides" data-slides="'+key+'" style="height:'+h+'px">'+inner+nav+'</div>';
 }
-function slide(id,dir){
-  const g=G[id];
-  g.cur=Math.max(0,Math.min(g.count-1,g.cur+dir));
-  g.track.style.transform=`translateX(-${g.cur*100}%)`;
-  g.dots.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===g.cur));
+function moveSlide(key,dir,e){
+  if(e)e.stopPropagation();
+  const box=document.querySelector('[data-slides="'+key+'"]');if(!box)return;
+  const slides=box.querySelectorAll(".slide");if(slides.length<2)return;
+  slideState[key]=((slideState[key]||0)+dir+slides.length)%slides.length;
+  slides.forEach((s,i)=>s.classList.toggle("cur",i===slideState[key]));
+  box.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("cur",i===slideState[key]));
 }
-document.addEventListener('DOMContentLoaded',()=>{
-  initGallery('co',4);
-  initGallery('pb',5);
-  initGallery('bc',3);
-  initGallery('ib',4);
-  initGallery('bg',5);
-  initGallery('ip',6);
+
+/* ================= MODAL ================= */
+function openModal(id){
+  const r=byId(id);if(!r)return;
+  const box=document.getElementById("modalBox");
+  box.innerHTML=
+    '<div style="position:relative">'+slidesHtml(r,"modal",215)+
+    '<button class="modal-close" onclick="closeModal()">✕</button></div>'+
+    '<div class="modal-body">'+
+      '<h3>'+r.name+'</h3>'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+ratingHtml(r)+'<span style="font-size:12px;color:var(--light)">'+r.area+'</span></div>'+
+      '<div class="tags" style="margin-bottom:10px">'+tagsHtml(r)+'</div>'+
+      (r.status?'<div class="status-flag" style="margin-bottom:10px">⚠ '+r.status+'</div>':"")+
+      '<p style="font-size:13.5px;color:var(--mid)">'+r.short+'</p>'+
+      '<div style="display:flex;gap:8px;align-items:center;margin-top:12px">'+favBtnHtml(r.id)+noteToggleHtml(r.id)+'</div>'+
+      notesBoxHtml(r.id)+
+      '<button class="modal-link" onclick="go(\'detail\',\''+r.id+'\')">View full page — menus & reservations →</button>'+
+    '</div>';
+  hydrateFavBtns(box);
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function closeModal(){
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.body.style.overflow="";
+}
+document.getElementById("modalOverlay").addEventListener("click",e=>{
+  if(!document.getElementById("modalBox").contains(e.target))closeModal();
 });
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+/* ================= DETAIL PAGE ================= */
+function renderDetail(id){
+  const r=byId(id);if(!r)return;
+  const el=document.getElementById("detailContent");
+  const resLabel={opentable:"Book on OpenTable",sevenrooms:"Book via SevenRooms",web:"Open reservation page",phone:"Call to reserve",none:"Walk-in — no reservations"}[r.resP];
+  let resControls="";
+  if(r.resP==="opentable"||r.resP==="sevenrooms"){
+    resControls='<div class="res-grid">'+
+      '<div class="fgroup"><label>Party size</label><select id="resCovers">'+[1,2,3,4,5,6,7,8].map(n=>'<option value="'+n+'"'+(n===3?" selected":"")+'>'+n+(n===1?" person":" people")+'</option>').join("")+'</select></div>'+
+      '<div class="fgroup"><label>Date</label><input type="date" id="resDate" value="2026-07-09" min="2026-07-09" max="2026-07-13"></div>'+
+      '<div class="fgroup"><label>Time</label><select id="resTime"><option value="12:00">12:00 PM</option><option value="12:30">12:30 PM</option><option value="13:00">1:00 PM</option><option value="18:00">6:00 PM</option><option value="18:30">6:30 PM</option><option value="19:00" selected>7:00 PM</option><option value="19:30">7:30 PM</option><option value="20:00">8:00 PM</option></select></div>'+
+      '</div>';
+  }
+  let resBtn;
+  if(r.resP==="none") resBtn='<div class="res-note" style="font-size:13px">No reservations needed — just show up'+(r.phone?' (or call '+r.phone+')':'')+'.</div>';
+  else if(r.resP==="phone") resBtn='<a class="book-btn" href="tel:'+r.phone.replace(/[^+\d]/g,"")+'">📞 Call '+r.phone+' to reserve</a>';
+  else resBtn='<button class="book-btn" onclick="book(\''+r.id+'\')">'+resLabel+' →</button>';
+
+  el.innerHTML=
+    '<div class="detail-hero">'+slidesHtml(r,"detail",9999)+
+      '<button class="back-btn" onclick="go(\'home\')">← All restaurants</button></div>'+
+    '<div class="detail-wrap">'+
+      '<div class="detail-title-row"><div style="flex:1;min-width:220px"><h1>'+r.name+'</h1><div class="detail-sub">'+r.area+' · '+r.region+'</div></div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">'+favBtnHtml(r.id)+ratingHtml(r)+'</div></div>'+
+      '<div class="tags" style="margin-top:12px">'+tagsHtml(r)+'</div>'+
+      (r.status?'<div class="status-flag" style="margin-top:12px">⚠ '+r.status+'</div>':"")+
+
+      '<div class="detail-card detail-desc"><p>'+r.desc+'</p>'+
+        (r.fun?'<div class="funfact"><b>Fun fact</b>'+r.fun+'</div>':"")+'</div>'+
+
+      '<div class="detail-card"><h3 class="dc-h">At a glance</h3><div class="info-grid">'+
+        '<div class="info-item"><div class="k">Hours</div><div class="v">'+r.hours+'</div></div>'+
+        '<div class="info-item"><div class="k">Drive from Rosewood</div><div class="v">'+(r.drive===0?"On property":"~"+r.drive+" minutes")+'</div></div>'+
+        (r.phone?'<div class="info-item"><div class="k">Phone</div><div class="v"><a href="tel:'+r.phone.replace(/[^+\d]/g,"")+'">'+r.phone+'</a></div></div>':"")+
+        (r.email?'<div class="info-item"><div class="k">Email</div><div class="v"><a href="mailto:'+r.email+'">'+r.email+'</a></div></div>':"")+
+        '<div class="info-item"><div class="k">Website</div><div class="v"><a href="'+r.web+'" target="_blank" rel="noopener">Visit site ↗</a></div></div>'+
+        '<div class="info-item"><div class="k">Price</div><div class="v">'+r.price+(r.fine?" · Fine dining":"")+'</div></div>'+
+      '</div></div>'+
+
+      (r.menus.length?'<div class="detail-card"><h3 class="dc-h">Menus</h3><div class="menu-btns">'+
+        r.menus.map(m=>'<a class="menu-btn" href="'+m.u+'" target="_blank" rel="noopener">📄 '+m.l+'</a>').join("")+'</div></div>':"")+
+
+      '<div class="detail-card res-card"><h3 class="dc-h">Make a reservation</h3>'+resControls+resBtn+
+        '<div class="res-note">Trip dates July 9–13, 2026 · party of 3 (Greg, Megan & Diane) preset</div></div>'+
+
+      '<div class="detail-card"><h3 class="dc-h">Your notes</h3>'+notesBoxHtml(r.id,true).replace('class="notesbox','class="notesbox open')+
+        '<div style="display:flex;gap:8px;margin-top:10px">'+favBtnHtml(r.id)+'</div></div>'+
+    '</div>';
+  hydrateFavBtns(el);
+}
+function book(id){
+  const r=byId(id);
+  const c=document.getElementById("resCovers"),d=document.getElementById("resDate"),t=document.getElementById("resTime");
+  const covers=c?c.value:3, date=d?d.value:"2026-07-09", time=t?t.value:"19:00";
+  let url=r.resU;
+  if(r.resP==="opentable") url+=(url.includes("?")?"&":"?")+"covers="+covers+"&dateTime="+date+"T"+encodeURIComponent(time);
+  else if(r.resP==="sevenrooms") url+=(url.includes("?")?"&":"?")+"date="+date+"&party_size="+covers+"&start_time="+encodeURIComponent(time);
+  window.open(url,"_blank","noopener");
+}
+
+/* ================= RECOMMENDATIONS ================= */
+const RECS=[
+ {n:"Night 1 · Thu July 9 — Arrival",id:"pinkbeach",bday:false,
+  why:"You land around 2pm — keep it close and beautiful. The Pink Beach Club is 5 minutes away, open-air over the Atlantic, with great seafood for Megan and zero logistics after a travel day. Stop at Marée Lounge upstairs for a pre-dinner cocktail if you have the energy."},
+ {n:"Night 2 · Fri July 10 — Hamilton night out",id:"barracuda",bday:false,
+  why:"A proper night out in the capital. Barracuda Grill remains Bermuda's most enduring fine-dining room — seafood and chops cover everyone. Book an early seating, then stroll Front Street after. Alternative: Intrepid (4.9★) if you'd rather have harbour views with your steak."},
+ {n:"Night 3 · Sat July 11 — Diane's 80th Birthday 🎂",id:"coconuts",bday:true,
+  why:"The most magical beach dinner in Bermuda: white linen on pink sand between dramatic cliffs, at sunset. Call ahead (441-238-0222), mention the 80th birthday, and request a sunset-facing table. Worth every minute of the 45-minute drive. Rain backup: Solaris upstairs at the same resort — same view through curved floor-to-ceiling windows."},
+ {n:"Night 4 · Sun July 12 — Elegant finish",id:"brasserie",bday:false,
+  why:"End on-property: Island Brasserie's cedar-beamed dining room and Pan Am murals, Chateaubriand carved tableside and no taxi home. (Intrepid and Harry's are closed Sundays; the Waterlot is open Sundays if you want one last blowout instead.)"}
+];
+const ALTS=[
+ {id:"waterlot",t:"The Waterlot Inn — reopened Dec 2025 after a full renovation. Bermuda's legendary 350-year-old steakhouse on Jews Bay. If you'd swap one pick, swap Night 2 for this."},
+ {id:"harbourfront",t:"Harbourfront — sushi + seafood + steaks with sweeping harbour sunsets; the most versatile special-occasion menu in Hamilton."},
+ {id:"achilles",t:"Achilles — the East End's stylish newcomer overlooking Achilles Bay, 20 min away. Lovely for a casual-smart lunch after exploring St George's."},
+ {id:"lina",t:"Lina & BLT Steak at the St. Regis — the most polished room near St George's; an easy birthday-eve dinner just 20 minutes out."},
+ {id:"wahoos",t:"Wahoo's — the locals' lunch in St George's: harbour-deck tables and award-winning chowder. Pair with a morning in the old town."}
+];
+function renderRecs(){
+  const el=document.getElementById("recList");
+  el.innerHTML=RECS.map(x=>{
+    const r=byId(x.id);
+    return '<div class="rec-card"><div class="rec-head'+(x.bday?" bday":"")+'"><span class="night">'+x.n+'</span></div>'+
+    '<div class="rec-body"><a class="rec-link" onclick="go(\'detail\',\''+r.id+'\')">'+r.name+' →</a>'+
+    '<div class="tags" style="margin:8px 0">'+tagsHtml(r)+'</div><p>'+x.why+'</p></div></div>';
+  }).join("")+
+  '<div class="section-head"><h2>New discoveries worth a look</h2><div class="sub">found while expanding the guide</div></div>'+
+  ALTS.map(a=>{
+    const r=byId(a.id);
+    return '<div class="rec-card"><div class="rec-body"><a class="rec-link" onclick="go(\'detail\',\''+r.id+'\')">'+r.name+' →</a><p style="margin-top:6px">'+a.t+'</p></div></div>';
+  }).join("")+
+  '<div class="rec-card"><div class="rec-body"><p><b>Booking tips:</b> July is peak season — reserve the birthday dinner as soon as possible. Intrepid &amp; Harry\'s are closed Sundays; the Waterlot is closed Mon–Tue; Wahoo\'s &amp; Marée are closed Mondays; Breezes skips dinner Tuesdays. Seasonal venues (The Dock, Marea at Newstead) should be confirmed by phone before you plan an evening around them.</p></div></div>';
+}
+
+/* ================= FAVORITES PAGE ================= */
+function renderFavs(){
+  const grid=document.getElementById("favGrid"),empty=document.getElementById("favEmpty");
+  const list=R.filter(r=>isFav(r.id));
+  empty.style.display=list.length?"none":"block";
+  grid.innerHTML=list.map(r=>{
+    const img=r.imgs.length?'<img class="card-img" loading="lazy" src="'+r.imgs[0]+'" onclick="go(\'detail\',\''+r.id+'\')" onerror="this.outerHTML=phImg(\''+r.id+'\')">':phImg(r.id);
+    return '<div class="card">'+img+'<div class="card-body fav-body">'+
+      '<div class="card-top"><h3 onclick="go(\'detail\',\''+r.id+'\')">'+r.name+'</h3>'+ratingHtml(r)+'</div>'+
+      '<div class="tags">'+tagsHtml(r)+'</div>'+
+      '<div class="card-desc">'+r.short+'</div>'+
+      notesBoxHtml(r.id,true).replace('class="notesbox','class="notesbox open')+
+      '<div class="card-actions">'+favBtnHtml(r.id)+'<a class="detail-link" onclick="go(\'detail\',\''+r.id+'\')">Details →</a></div>'+
+    '</div></div>';
+  }).join("");
+  hydrateFavBtns(grid);
+}
+
+/* ================= INIT ================= */
+(function init(){
+  // cuisine options
+  const cuisines=[...new Set(R.map(r=>r.cuisine))].sort();
+  document.getElementById("fCuisine").innerHTML='<option value="">All cuisines</option>'+cuisines.map(c=>'<option>'+c+'</option>').join("");
+  // hero stats
+  const bf=R.filter(r=>r.setting==="beachfront").length,fine=R.filter(r=>r.fine).length;
+  document.getElementById("heroStats").innerHTML=
+    '<span class="hero-stat">'+R.length+' restaurants</span><span class="hero-stat">🏖 '+bf+' beachfront</span><span class="hero-stat">✦ '+fine+' fine dining</span><span class="hero-stat">📍 from Rosewood Tucker\'s Point</span>';
+  updateFavCount();
+  initMap();
+  applyFilters();
+  document.getElementById("page-home").classList.add("active");
+  document.querySelector('[data-nav="home"]').classList.add("on");
+  routeFromHash();
+})();
 </script>
 </body>
 </html>
