@@ -37,6 +37,12 @@ nav{position:sticky;top:0;z-index:1100;background:rgba(11,57,84,.92);backdrop-fi
   .nav-btn{font-size:12px;padding:6px 8px}
   .nav-inner{gap:4px}
 }
+@media(max-width:380px){
+  nav{padding:0 8px}
+  .nav-brand{font-size:13.5px}
+  .nav-btn{font-size:11px;padding:5px 6px}
+  .nav-btn .favcount{font-size:9px;padding:1px 4px;margin-left:2px}
+}
 .nav-btn{color:rgba(255,255,255,.75);font-size:13.5px;font-weight:600;padding:7px 12px;border-radius:99px;white-space:nowrap;transition:.2s}
 .nav-btn.on,.nav-btn:hover{color:#fff;background:rgba(255,255,255,.14)}
 .nav-btn .favcount{background:var(--coral);color:#fff;border-radius:99px;font-size:10.5px;padding:1px 6px;margin-left:4px;font-weight:700}
