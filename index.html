@@ -219,7 +219,7 @@ footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46p
       <div class="hero-eyebrow">Diane's 80th Birthday Trip · July 9–13, 2026</div>
       <h1>Waterfront Dining<br>in Bermuda</h1>
       <p>Every restaurant on the water — from white-linen beachfront dining rooms to toes-in-the-sand fish shacks. All distances measured from Rosewood Tucker's Point.</p>
-      <div class="hero-stats" id="heroStats"></div>
+      <div class="hero-stats"><button class="hero-stat" style="cursor:pointer" onclick="dirToRosewood()">🧭 Directions to the Rosewood</button></div>
     </div>
   </div>
 
@@ -321,6 +321,17 @@ footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46p
 <!-- ============ MAP MODAL ============ -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalBox"></div>
+</div>
+
+<!-- ============ LOCATION MAP MODAL ============ -->
+<div class="modal-overlay" id="mapOverlay">
+  <div class="modal" id="mapBox" style="max-width:560px;overflow:hidden">
+    <div style="position:relative">
+      <button class="modal-close" style="background:rgba(11,57,84,.5)" onclick="closeMapModal()">✕</button>
+      <div id="miniMapTitle" style="padding:14px 48px 10px 18px;font-family:'Fraunces',serif;font-size:19px;color:var(--navy)"></div>
+    </div>
+    <div id="miniMap" style="height:380px"></div>
+  </div>
 </div>
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -713,24 +724,34 @@ function noteToggleHtml(id){
 
 /* ================= NAV / ROUTING ================= */
 let map=null, markers={};
+const RW=[32.33776,-64.69998];
 function go(page,id){
+  const target = page==="detail" ? "#/r/"+id : "#/"+page;
+  if(location.hash===target) render(page,id);
+  else location.hash=target;
+}
+function render(page,id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("on",b.dataset.nav===page));
-  closeModal();
+  closeModal();closeMapModal();closeLightbox();
   if(page==="detail"){renderDetail(id);document.getElementById("page-detail").classList.add("active");}
   else document.getElementById("page-"+page).classList.add("active");
   if(page==="favs") renderFavs();
   if(page==="recs") renderRecs();
   window.scrollTo(0,0);
   if(page==="home"&&map) setTimeout(()=>map.invalidateSize(),50);
-  location.hash = page==="detail" ? "#/r/"+id : "#/"+page;
 }
 window.addEventListener("hashchange",()=>{routeFromHash();});
 function routeFromHash(){
   const h=location.hash;
-  if(h.startsWith("#/r/")){const id=h.slice(4);if(byId(id)&&!document.getElementById("page-detail").classList.contains("active"))go("detail",id);}
-  else if(h==="#/recs"&&!document.getElementById("page-recs").classList.contains("active"))go("recs");
-  else if(h==="#/favs"&&!document.getElementById("page-favs").classList.contains("active"))go("favs");
+  if(h.startsWith("#/r/")){const id=h.slice(4);if(byId(id)){render("detail",id);return;}}
+  if(h==="#/recs"){render("recs");return;}
+  if(h==="#/favs"){render("favs");return;}
+  render("home");
+}
+function dirToRosewood(){
+  const apple=/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+  window.open(apple?"https://maps.apple.com/?daddr="+RW[0]+","+RW[1]:"https://www.google.com/maps/dir/?api=1&destination="+RW[0]+","+RW[1],"_blank","noopener");
 }
 
 /* ================= FILTERS ================= */
@@ -800,7 +821,7 @@ function cardHtml(r){
       (r.status?'<div class="status-flag">⚠ '+r.status+'</div>':"")+
       '<div class="card-desc">'+r.short+'</div>'+
       notesBoxHtml(r.id)+
-      '<div class="card-actions">'+favBtnHtml(r.id)+noteToggleHtml(r.id)+
+      '<div class="card-actions">'+favBtnHtml(r.id)+noteToggleHtml(r.id)+'<button class="notes-toggle" onclick="openMapModal(\''+r.id+'\')">🗺 Map</button>'+
       '<a class="detail-link" onclick="go(\'detail\',\''+r.id+'\')">Details →</a></div>'+
     '</div></div>';
 }
@@ -821,12 +842,15 @@ function pinHtml(faved){
 function makeIcon(faved){
   return L.divIcon({className:"",html:pinHtml(faved),iconSize:[30,30],iconAnchor:[15,36]});
 }
+function rosewoodIcon(){
+  return L.divIcon({className:"",html:'<div style="display:flex;flex-direction:column;align-items:center"><div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#E3B23C,#B8860B);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:18px">🏨</div><div style="background:#0B3954;color:#fff;border-radius:99px;padding:2px 9px;font-size:10.5px;font-weight:700;margin-top:2px;white-space:nowrap;border:1.5px solid #fff">Rosewood</div></div>',iconSize:[96,64],iconAnchor:[48,22]});
+}
 function initMap(){
   map=L.map("map",{scrollWheelZoom:false}).setView([32.32,-64.76],11);
   L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{
     attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:18}).addTo(map);
   // Rosewood home marker
-  L.marker([32.33776,-64.69998],{icon:L.divIcon({className:"",html:'<div style="background:#0B3954;color:#fff;border:2.5px solid #fff;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.35)">🏨 Rosewood</div>',iconSize:[90,24],iconAnchor:[45,12]}),zIndexOffset:-100}).addTo(map);
+  L.marker(RW,{icon:rosewoodIcon(),zIndexOffset:1200}).addTo(map);
   renderMarkers(R);
   fitAllPins();
   setTimeout(function(){map.invalidateSize();fitAllPins();},350);
@@ -903,7 +927,7 @@ document.getElementById("modalOverlay").addEventListener("click",e=>{
   if(!document.getElementById("modalBox").contains(e.target))closeModal();
 });
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){closeLightbox();closeModal();}
+  if(e.key==="Escape"){closeLightbox();closeMapModal();closeModal();}
   if(document.getElementById("lightbox").classList.contains("open")){
     if(e.key==="ArrowRight")lbMove(1);
     if(e.key==="ArrowLeft")lbMove(-1);
@@ -916,6 +940,33 @@ function openLightbox(id,i){lbId=id;lbI=i;renderLb();document.getElementById("li
 function renderLb(){const r=byId(lbId);document.getElementById("lbImg").src=r.imgs[lbI];document.getElementById("lbCount").textContent=r.name+" — photo "+(lbI+1)+" of "+r.imgs.length;}
 function lbMove(d,e){if(e)e.stopPropagation();const r=byId(lbId);lbI=(lbI+d+r.imgs.length)%r.imgs.length;renderLb();}
 function closeLightbox(){document.getElementById("lightbox").classList.remove("open");if(!document.getElementById("modalOverlay").classList.contains("open"))document.body.style.overflow="";}
+
+/* ================= LOCATION MAP MODAL ================= */
+let mini=null;
+function openMapModal(id){
+  const r=byId(id);if(!r)return;
+  document.getElementById("miniMapTitle").innerHTML=r.name+' <span style="color:var(--light);font-size:13px;font-weight:400;font-family:Inter,sans-serif">· '+(r.drive===0?"on property at the Rosewood":"~"+r.drive+" min from the Rosewood")+'</span>';
+  document.getElementById("mapOverlay").classList.add("open");
+  document.body.style.overflow="hidden";
+  setTimeout(function(){
+    if(mini){mini.remove();mini=null;}
+    mini=L.map("miniMap",{scrollWheelZoom:false});
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{attribution:"© OpenStreetMap © CARTO",maxZoom:18}).addTo(mini);
+    L.marker(RW,{icon:rosewoodIcon(),zIndexOffset:1200}).addTo(mini);
+    L.marker([r.lat,r.lng],{icon:makeIcon(isFav(r.id))}).addTo(mini);
+    mini.fitBounds(L.latLngBounds([RW,[r.lat,r.lng]]),{padding:[52,52],maxZoom:15});
+  },90);
+}
+function closeMapModal(){
+  const o=document.getElementById("mapOverlay");
+  if(!o.classList.contains("open"))return;
+  o.classList.remove("open");
+  if(mini){mini.remove();mini=null;}
+  if(!document.getElementById("modalOverlay").classList.contains("open"))document.body.style.overflow="";
+}
+document.getElementById("mapOverlay").addEventListener("click",e=>{
+  if(!document.getElementById("mapBox").contains(e.target))closeMapModal();
+});
 /* ================= DETAIL PAGE ================= */
 function renderDetail(id){
   const r=byId(id);if(!r)return;
@@ -939,7 +990,7 @@ function renderDetail(id){
       '<button class="back-btn" onclick="go(\'home\')">← All restaurants</button></div>'+
     '<div class="detail-wrap">'+
       '<div class="detail-title-row"><div style="flex:1;min-width:220px"><h1>'+r.name+'</h1><div class="detail-sub">'+r.area+' · '+r.region+'</div></div>'+
-      '<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">'+favBtnHtml(r.id)+ratingHtml(r)+'</div></div>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end"><div style="display:flex;gap:8px">'+favBtnHtml(r.id)+'<button class="favbtn" onclick="openMapModal(\''+r.id+'\')">🗺 Map</button></div>'+ratingHtml(r)+'</div></div>'+
       '<div class="tags" style="margin-top:12px">'+tagsHtml(r)+'</div>'+
       (r.status?'<div class="status-flag" style="margin-top:12px">⚠ '+r.status+'</div>':"")+
 
@@ -1022,7 +1073,7 @@ function renderFavs(){
       '<div class="tags">'+tagsHtml(r)+'</div>'+
       '<div class="card-desc">'+r.short+'</div>'+
       notesBoxHtml(r.id,true).replace('class="notesbox','class="notesbox open')+
-      '<div class="card-actions">'+favBtnHtml(r.id)+'<a class="detail-link" onclick="go(\'detail\',\''+r.id+'\')">Details →</a></div>'+
+      '<div class="card-actions">'+favBtnHtml(r.id)+'<button class="notes-toggle" onclick="openMapModal(\''+r.id+'\')">🗺 Map</button><a class="detail-link" onclick="go(\'detail\',\''+r.id+'\')">Details →</a></div>'+
     '</div></div>';
   }).join("");
   hydrateFavBtns(grid);
@@ -1033,10 +1084,6 @@ function renderFavs(){
   // cuisine options
   const cuisines=[...new Set(R.map(r=>r.cuisine))].sort();
   document.getElementById("fCuisine").innerHTML='<option value="">All cuisines</option>'+cuisines.map(c=>'<option>'+c+'</option>').join("");
-  // hero stats
-  const bf=R.filter(r=>r.setting==="beachfront").length,fine=R.filter(r=>r.fine).length;
-  document.getElementById("heroStats").innerHTML=
-    '<span class="hero-stat">'+R.length+' restaurants</span><span class="hero-stat">🏖 '+bf+' beachfront</span><span class="hero-stat">✦ '+fine+' fine dining</span><span class="hero-stat">📍 from Rosewood Tucker\'s Point</span>';
   updateFavCount();
   initMap();
   applyFilters();
