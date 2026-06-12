@@ -78,6 +78,14 @@ nav{position:sticky;top:0;z-index:1100;background:rgba(11,57,84,.92);backdrop-fi
 .chip{border:1.5px solid var(--border);background:#fff;color:var(--mid);border-radius:99px;padding:7px 13px;font-size:12.5px;font-weight:600;transition:.15s}
 .chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
 .chip.fav-chip.on{background:var(--coral);border-color:var(--coral)}
+.fcollapse{min-width:0}
+.fcollapse summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--light);padding:7px 12px;border:1.5px solid var(--border);border-radius:99px;background:#fff;user-select:none}
+.fcollapse summary::-webkit-details-marker{display:none}
+.fcollapse summary::after{content:"▾";font-size:9px;transition:transform .15s}
+.fcollapse[open] summary::after{transform:rotate(180deg)}
+.fcollapse[open] summary{color:var(--teal);border-color:var(--teal)}
+.fcollapse:has(.chip.on) summary{color:var(--coral-d);border-color:var(--coral)}
+.fcollapse .chips{margin-top:8px}
 .reset-btn{margin-left:auto;color:var(--coral-d);font-size:12.5px;font-weight:700;padding:6px 4px}
 .result-count{font-size:13px;color:var(--mid);font-weight:600;margin:14px 2px 0}
 
@@ -248,9 +256,6 @@ footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46p
             <option>West End &amp; Dockyard</option>
           </select>
         </div>
-        <div class="fgroup"><label>Cuisine</label>
-          <select id="fCuisine" onchange="applyFilters()"><option value="">All cuisines</option></select>
-        </div>
         <div class="fgroup"><label>Rating</label>
           <select id="fRating" onchange="applyFilters()">
             <option value="">Any rating</option>
@@ -260,6 +265,9 @@ footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46p
             <option value="4.7">4.7 +</option>
           </select>
         </div>
+        <button class="reset-btn" onclick="resetFilters()">Reset all</button>
+      </div>
+      <div class="filter-row">
         <div class="fgroup"><label>Drive from Rosewood</label>
           <select id="fDrive" onchange="applyFilters()">
             <option value="">Any distance</option>
@@ -269,32 +277,34 @@ footer{text-align:center;color:var(--light);font-size:12px;padding:26px 16px 46p
             <option value="50">≤ 50 min</option>
           </select>
         </div>
-        <button class="reset-btn" onclick="resetFilters()">Reset all</button>
+        <div class="fgroup"><label>Cuisine</label>
+          <select id="fCuisine" onchange="applyFilters()"><option value="">All cuisines</option></select>
+        </div>
       </div>
-      <div class="filter-row">
-        <div class="fgroup"><label>Setting</label>
+      <div class="filter-row" style="align-items:flex-start">
+        <details class="fcollapse"><summary>Setting</summary>
           <div class="chips" id="fSetting">
             <button class="chip" data-v="beachfront" onclick="toggleChip(this)">🏖 Beachfront</button>
             <button class="chip" data-v="waterfront" onclick="toggleChip(this)">⚓ Waterfront</button>
             <button class="chip" data-v="waterview" onclick="toggleChip(this)">🌊 Water view</button>
           </div>
-        </div>
-        <div class="fgroup"><label>Style</label>
+        </details>
+        <details class="fcollapse"><summary>Style</summary>
           <div class="chips">
             <button class="chip" id="fFine" onclick="toggleChip(this)">✦ Fine dining</button>
           </div>
-        </div>
-        <div class="fgroup"><label>Best for</label>
+        </details>
+        <details class="fcollapse"><summary>Best for</summary>
           <div class="chips" id="fMeal">
             <button class="chip" data-v="lunch" onclick="toggleChip(this)">☀️ Lunch spot</button>
             <button class="chip" data-v="dinner" onclick="toggleChip(this)">🌙 Dinner spot</button>
           </div>
-        </div>
-        <div class="fgroup"><label>Mine</label>
+        </details>
+        <details class="fcollapse"><summary>Mine</summary>
           <div class="chips">
             <button class="chip fav-chip" id="fFavs" onclick="toggleChip(this)">♥ Favorites only</button>
           </div>
-        </div>
+        </details>
       </div>
       <div class="result-count" id="resultCount"></div>
     </div>
@@ -772,6 +782,7 @@ function activeChips(groupId){return [...document.querySelectorAll("#"+groupId+"
 function resetFilters(){
   ["fRegion","fCuisine","fRating","fDrive"].forEach(i=>document.getElementById(i).value="");
   document.querySelectorAll(".filterbar .chip.on").forEach(c=>c.classList.remove("on"));
+  document.querySelectorAll(".fcollapse").forEach(d=>d.removeAttribute("open"));
   applyFilters();
 }
 function filtered(){
